@@ -208,3 +208,12 @@ model tbl_wishlist {
 
   @@unique([customer_id, product_id], map: "uq_tbl_wishlist")
 }
+model tbl_users {
+  user_id    Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  role       String   @default("customer") // Define se é "admin" (você) ou "customer" (cliente)
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+}
