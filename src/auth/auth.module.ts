@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -10,10 +11,10 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'super_chave_secreta_site_erika_2026',
-      signOptions: { expiresIn: '1d' }, // O token expira em 1 dia
+      signOptions: { expiresIn: '1d' }, 
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy], // <- JwtStrategy adicionado aqui
 })
 export class AuthModule {}
