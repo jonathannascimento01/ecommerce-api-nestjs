@@ -7,22 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tbl_addresses {
-  address_id    BigInt        @id @default(autoincrement())
-  customer_id   BigInt
-  zip_code      String        @db.VarChar(9)
-  street        String        @db.VarChar(120)
-  number        String?       @db.VarChar(20)
-  complement    String?       @db.VarChar(80)
-  district      String?       @db.VarChar(80)
-  city          String?       @db.VarChar(80)
-  state         String?       @db.Char(2)
-  is_default    Boolean       @default(false)
-  tbl_customers tbl_customers @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tbl_addresses_customer")
-
-  @@index([customer_id], map: "idx_tbl_addresses_customer")
-}
-
 model tbl_brands {
   brand_id     BigInt         @id @default(autoincrement())
   brand_name   String         @unique(map: "uq_tbl_brands_name") @db.VarChar(80)
@@ -89,7 +73,6 @@ model tbl_customers {
   password_hash String          @db.VarChar(255)
   active        Boolean         @default(true)
   created_at    DateTime        @default(now()) @db.Timestamp(6)
-  tbl_addresses tbl_addresses[]
   tbl_carts     tbl_carts?
   tbl_orders    tbl_orders[]
   tbl_wishlist  tbl_wishlist[]
@@ -216,4 +199,21 @@ model tbl_users {
   role       String   @default("customer") // Define se é "admin" (você) ou "customer" (cliente)
   active     Boolean  @default(true)
   created_at DateTime @default(now())
+  addresses tbl_addresses[]
+}
+model tbl_addresses {
+  address_id   Int      @id @default(autoincrement())
+  user_id      Int
+  street       String
+  number       String
+  complement   String?  // O ponto de interrogação significa que este campo é opcional
+  neighborhood String
+  city         String
+  state        String
+  zip_code     String
+  country      String   @default("Brasil")
+  created_at   DateTime @default(now())
+
+  // Relacionamento: Informa ao banco que este endereço pertence a um utilizador
+  user         tbl_users @relation(fields: [user_id], references: [user_id])
 }

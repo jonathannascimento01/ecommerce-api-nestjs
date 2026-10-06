@@ -34,13 +34,15 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.prisma.tbl_users.findUnique({
       where: { user_id: id },
+      include: { addresses: true }, // Traz os endereços associados ao utilizador
     });
-    
-    if (user) {
-      const { password, ...result } = user;
-      return result;
+
+    if (!user) {
+      return null;
     }
-    return null;
+
+    const { password, ...result } = user;
+    return result;
   }
 
   async findByEmail(email: string) {
