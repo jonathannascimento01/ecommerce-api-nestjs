@@ -4,7 +4,7 @@ import { BrandsController } from './brands.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [PrismaModule], // Prisma conectado aqui!
+  imports: [PrismaModule],
   controllers: [BrandsController],
   providers: [BrandsService],
 })
