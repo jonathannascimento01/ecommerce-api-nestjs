@@ -1,37 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AddressesService } from './addresses.service';
-import { CreateAddressDto } from './dto/create-address.dto';
-import { UpdateAddressDto } from './dto/update-address.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('addresses')
+@UseGuards(JwtAuthGuard)
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
   @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressesService.create(createAddressDto);
+  create(@Req() req: any, @Body() body: any) {
+    const userId = Number(req.user.userId || req.user.sub || req.user.id);
+    return this.addressesService.create(userId, body);
   }
-// ... (mantenha o resto das funções findAll, findOne, etc. exatamente como estão)
 
   @Get()
-  findAll() {
-    return this.addressesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressesService.update(+id, updateAddressDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressesService.remove(+id);
+  findAll(@Req() req: any) {
+    const userId = Number(req.user.userId || req.user.sub || req.user.id);
+    return this.addressesService.findAllByUser(userId);
   }
 }

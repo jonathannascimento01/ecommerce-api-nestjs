@@ -1,18 +1,86 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
-describe('UsersService', () => {
-  let service: UsersService;
+@Injectable()
+export class UsersService {
+  constructor(private prisma: PrismaService) {}
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
-    }).compile();
+  async create(data: { name: string; email: string; password: string }) {
+    // 1. Verificar se o e-mail já existe
+    const existingUser = await this.prisma.tbl_users.findUnique({
+      where: { email: data.email },
+    });
 
-    service = module.get<UsersService>(UsersService);
-  });
+    if (existingUser) {
+      throw new BadRequestException('Este e-mail já está registado.');
+    }
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    // 2. Criar estritamente com name, email e password
+    const user = await this.prisma.tbl_users.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      message: 'Utilizador registado com sucesso!',
+      user_id: user.user_id.toString(),
+      email: user.email,
+    };
+  }
+
+  async findByEmail(email: string) {
+    return this.prisma.tbl_users.findUnique({
+      where: { email },
+    });
+  }
+
+  async findAll() {
+    const users = await this.prisma.tbl_users.findMany();
+    return JSON.parse(
+      JSON.stringify(users, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+  }
+
+  async findOne(id: number) {
+    const user = await this.prisma.tbl_users.findUnique({
+      where: { user_id: id },
+    });
+    if (!user) {
+      throw new NotFoundException('Utilizador não encontrado.');
+    }
+    return JSON.parse(
+      JSON.stringify(user, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+  }
+
+  async update(id: number, data: { name?: string; email?: string; active?: boolean }) {
+    await this.findOne(id);
+    const updated = await this.prisma.tbl_users.update({
+      where: { user_id: id },
+      data,
+    });
+    return JSON.parse(
+      JSON.stringify(updated, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+  }
+
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.prisma.tbl_users.delete({
+      where: { user_id: id },
+    });
+    return { message: 'Utilizador eliminado com sucesso.' };
+  }
+}

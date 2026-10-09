@@ -5,85 +5,68 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProductDto: any) {
-    const created = await this.prisma.tbl_products.create({
-      data: {
-        ...createProductDto,
-        brand_id: createProductDto.brand_id ? BigInt(createProductDto.brand_id) : null,
-        category_id: createProductDto.category_id ? BigInt(createProductDto.category_id) : null,
-      },
-    });
-
+  // Helper para serializar BigInt e Decimal para JSON de forma limpa
+  private serializeData(data: any) {
     return JSON.parse(
-      JSON.stringify(created, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
+      JSON.stringify(data, (_, value) => (typeof value === 'bigint' ? value.toString() : value))
     );
   }
 
+  // Listar todos os produtos ativos com as relações principais
   async findAll() {
     const products = await this.prisma.tbl_products.findMany({
+      where: { active: true },
       include: {
         tbl_brands: true,
         tbl_categories: true,
+        tbl_stock: true,
+        tbl_product_images: true,
       },
+      orderBy: { product_name: 'asc' },
     });
-
-    return JSON.parse(
-      JSON.stringify(products, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
-    );
+    return this.serializeData(products);
   }
 
-  async findOne(id: number) {
+  // Buscar um produto detalhado pelo ID
+  async findOne(id: number | bigint) {
     const product = await this.prisma.tbl_products.findUnique({
       where: { product_id: BigInt(id) },
       include: {
         tbl_brands: true,
         tbl_categories: true,
+        tbl_stock: true,
+        tbl_product_images: true,
       },
     });
 
-    if (!product) {
-      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
+    if (!product || !product.active) {
+      throw new NotFoundException('Produto não encontrado ou inativo.');
     }
 
-    return JSON.parse(
-      JSON.stringify(product, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
-    );
+    return this.serializeData(product);
   }
 
-  async update(id: number, updateProductDto: any) {
-    await this.findOne(id);
-    const updated = await this.prisma.tbl_products.update({
-      where: { product_id: BigInt(id) },
-      data: {
-        ...updateProductDto,
-        brand_id: updateProductDto.brand_id ? BigInt(updateProductDto.brand_id) : undefined,
-        category_id: updateProductDto.category_id ? BigInt(updateProductDto.category_id) : undefined,
-      },
-    });
+  // Atualizar um produto existente
+  async update(id: number | bigint, updateDto: any) {
+    try {
+      // Verificar se o produto existe antes de atualizar
+      await this.findOne(id);
 
-    return JSON.parse(
-      JSON.stringify(updated, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
-    );
-  }
+      const updatedProduct = await this.prisma.tbl_products.update({
+        where: { product_id: BigInt(id) },
+        data: updateDto,
+        include: {
+          tbl_brands: true,
+          tbl_categories: true,
+          tbl_stock: true,
+          tbl_product_images: true,
+        },
+      });
 
-  async remove(id: number) {
-    await this.findOne(id);
-    const deleted = await this.prisma.tbl_products.delete({
-      where: { product_id: BigInt(id) },
-    });
-
-    return JSON.parse(
-      JSON.stringify(deleted, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
-    );
+      return this.serializeData(updatedProduct);
+    } catch (error) {
+      console.error('ERRO NO UPDATE DO PRODUTO:', error);
+      throw error;
+    }
   }
 }

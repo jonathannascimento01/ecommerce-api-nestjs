@@ -8,16 +8,31 @@ datasource db {
 }
 
 model tbl_brands {
-  brand_id     BigInt         @id @default(autoincrement())
-  brand_name   String         @unique(map: "uq_tbl_brands_name") @db.VarChar(80)
-  active       Boolean        @default(true)
-  created_at   DateTime       @default(now()) @db.Timestamp(6)
+  brand_id     BigInt       @id @default(autoincrement())
+  brand_name   String       @unique(map: "uq_tbl_brands_name") @db.VarChar(80)
+  active       Boolean      @default(true)
+  created_at   DateTime     @default(now()) @db.Timestamp(6)
   tbl_products tbl_products[]
 
   @@index([active], map: "idx_tbl_brands_active")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tbl_addresses {
+  address_id   Int      @id @default(autoincrement())
+  user_id      Int
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  zip_code     String
+  created_at   DateTime @default(now())
+  
+  tbl_users    tbl_users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  tbl_orders   tbl_orders[]
+}
+
 model tbl_cart_items {
   cart_item_id BigInt       @id @default(autoincrement())
   cart_id      BigInt
@@ -40,10 +55,10 @@ model tbl_carts {
 }
 
 model tbl_categories {
-  category_id   BigInt         @id @default(autoincrement())
-  category_name String         @unique(map: "uq_tbl_categories_name") @db.VarChar(50)
-  active        Boolean        @default(true)
-  created_at    DateTime       @default(now()) @db.Timestamp(6)
+  category_id   BigInt       @id @default(autoincrement())
+  category_name String       @unique(map: "uq_tbl_categories_name") @db.VarChar(50)
+  active        Boolean      @default(true)
+  created_at    DateTime     @default(now()) @db.Timestamp(6)
   tbl_products  tbl_products[]
 
   @@index([active], map: "idx_tbl_categories_active")
@@ -66,13 +81,13 @@ model tbl_coupons {
 }
 
 model tbl_customers {
-  customer_id   BigInt          @id @default(autoincrement())
-  full_name     String          @db.VarChar(120)
-  email         String          @unique(map: "uq_tbl_customers_email") @db.VarChar(150)
-  phone         String?         @db.VarChar(20)
-  password_hash String          @db.VarChar(255)
-  active        Boolean         @default(true)
-  created_at    DateTime        @default(now()) @db.Timestamp(6)
+  customer_id   BigInt         @id @default(autoincrement())
+  full_name     String         @db.VarChar(120)
+  email         String         @unique(map: "uq_tbl_customers_email") @db.VarChar(150)
+  phone         String?        @db.VarChar(20)
+  password_hash String         @db.VarChar(255)
+  active        Boolean        @default(true)
+  created_at    DateTime       @default(now()) @db.Timestamp(6)
   tbl_carts     tbl_carts?
   tbl_orders    tbl_orders[]
   tbl_wishlist  tbl_wishlist[]
@@ -94,19 +109,21 @@ model tbl_order_items {
 }
 
 model tbl_orders {
-  order_id        BigInt            @id @default(autoincrement())
+  order_id        BigInt          @id @default(autoincrement())
   customer_id     BigInt
   coupon_id       BigInt?
-  order_number    String            @unique(map: "uq_tbl_orders_number") @db.VarChar(30)
-  subtotal_amount Decimal           @db.Decimal(12, 2)
-  discount_amount Decimal           @default(0) @db.Decimal(12, 2)
-  shipping_amount Decimal           @default(0) @db.Decimal(12, 2)
-  total_amount    Decimal           @db.Decimal(12, 2)
-  status          String            @db.VarChar(20)
-  created_at      DateTime          @default(now()) @db.Timestamp(6)
+  address_id      Int?
+  order_number    String          @unique(map: "uq_tbl_orders_number") @db.VarChar(30)
+  subtotal_amount Decimal         @db.Decimal(12, 2)
+  discount_amount Decimal         @default(0) @db.Decimal(12, 2)
+  shipping_amount Decimal         @default(0) @db.Decimal(12, 2)
+  total_amount    Decimal         @db.Decimal(12, 2)
+  status          String          @db.VarChar(20)
+  created_at      DateTime        @default(now()) @db.Timestamp(6)
   tbl_order_items tbl_order_items[]
-  tbl_coupons     tbl_coupons?      @relation(fields: [coupon_id], references: [coupon_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_coupon")
-  tbl_customers   tbl_customers     @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_customer")
+  tbl_coupons     tbl_coupons?    @relation(fields: [coupon_id], references: [coupon_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_coupon")
+  tbl_customers   tbl_customers   @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_customer")
+  tbl_addresses   tbl_addresses?  @relation(fields: [address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_address")
   tbl_payments    tbl_payments?
 }
 
@@ -131,7 +148,6 @@ model tbl_product_images {
   @@index([product_id], map: "idx_tbl_product_images_product")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model tbl_products {
   product_id          BigInt                @id @default(autoincrement())
   brand_id            BigInt
@@ -161,7 +177,6 @@ model tbl_products {
   @@index([product_name], map: "idx_tbl_products_name")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model tbl_stock {
   product_id   BigInt       @id
   quantity     Int          @default(0)
@@ -191,29 +206,14 @@ model tbl_wishlist {
 
   @@unique([customer_id, product_id], map: "uq_tbl_wishlist")
 }
+
 model tbl_users {
   user_id    Int      @id @default(autoincrement())
   name       String
   email      String   @unique
   password   String
-  role       String   @default("customer") // Define se é "admin" (você) ou "customer" (cliente)
+  role       String   @default("customer")
   active     Boolean  @default(true)
   created_at DateTime @default(now())
-  addresses tbl_addresses[]
-}
-model tbl_addresses {
-  address_id   Int      @id @default(autoincrement())
-  user_id      Int
-  street       String
-  number       String
-  complement   String?  // O ponto de interrogação significa que este campo é opcional
-  neighborhood String
-  city         String
-  state        String
-  zip_code     String
-  country      String   @default("Brasil")
-  created_at   DateTime @default(now())
-
-  // Relacionamento: Informa ao banco que este endereço pertence a um utilizador
-  user         tbl_users @relation(fields: [user_id], references: [user_id])
+  addresses  tbl_addresses[]
 }

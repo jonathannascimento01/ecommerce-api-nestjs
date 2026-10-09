@@ -13,10 +13,44 @@ export class CartService {
     );
   }
 
+  private async ensureCustomerExists(customer_id: number) {
+    const customer = await this.prisma.tbl_customers.findUnique({
+      where: { customer_id: BigInt(customer_id) },
+    });
+
+    if (!customer) {
+      // Vamos buscar o utilizador para copiar os dados
+      const user = await this.prisma.tbl_users.findUnique({
+        where: { user_id: Number(customer_id) },
+      });
+
+      if (!user) {
+        throw new BadRequestException('Utilizador não encontrado na tabela tbl_users.');
+      }
+
+      try {
+        // Criamos o cliente respeitando a exata nomenclatura do schema do Prisma
+        await this.prisma.tbl_customers.create({
+          data: {
+            customer_id: BigInt(customer_id),
+            full_name: user.name,
+            email: user.email,
+            password_hash: user.password, // <-- AQUI ESTAVA O PROBLEMA!
+          },
+        });
+      } catch (error) {
+        console.error('Erro fatal ao sincronizar cliente em tbl_customers:', error);
+        throw new BadRequestException('Falha ao criar o registo do cliente antes do carrinho.');
+      }
+    }
+  }
+
   async getCartByCustomer(customer_id: number) {
     if (!customer_id) {
       throw new BadRequestException('ID do cliente não fornecido.');
     }
+
+    await this.ensureCustomerExists(customer_id);
 
     try {
       let cart = await this.prisma.tbl_carts.findUnique({
@@ -64,6 +98,8 @@ export class CartService {
     if (!product) {
       throw new NotFoundException(`Produto com ID ${product_id} não encontrado.`);
     }
+
+    await this.ensureCustomerExists(customer_id);
 
     let cart = await this.prisma.tbl_carts.findUnique({
       where: { customer_id: BigInt(customer_id) },

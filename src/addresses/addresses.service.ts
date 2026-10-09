@@ -1,41 +1,39 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AddressesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createAddressDto: any) {
-    try {
-      return await this.prisma.tbl_addresses.create({
-        data: createAddressDto,
-      });
-    } catch (error: any) {
-      // Isto vai furar o escudo do erro 500 e atirar o erro real para o seu PowerShell!
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  findAll() {
-    return this.prisma.tbl_addresses.findMany();
-  }
-
-  findOne(id: number) {
-    return this.prisma.tbl_addresses.findUnique({
-      where: { address_id: id },
+  async create(userId: number, data: {
+    street: string;
+    number: string;
+    complement?: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zip_code: string;
+  }) {
+    const address = await this.prisma.tbl_addresses.create({
+      data: {
+        user_id: userId,
+        street: data.street,
+        number: data.number,
+        complement: data.complement,
+        neighborhood: data.neighborhood,
+        city: data.city,
+        state: data.state,
+        zip_code: data.zip_code,
+      },
     });
+
+    return address;
   }
 
-  update(id: number, updateAddressDto: any) {
-    return this.prisma.tbl_addresses.update({
-      where: { address_id: id },
-      data: updateAddressDto,
-    });
-  }
-
-  remove(id: number) {
-    return this.prisma.tbl_addresses.delete({
-      where: { address_id: id },
+  async findAllByUser(userId: number) {
+    return this.prisma.tbl_addresses.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
     });
   }
 }
