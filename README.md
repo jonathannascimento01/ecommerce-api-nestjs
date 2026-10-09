@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="./assets/banner.png" alt="Banner E-commerce Backend API" width="100%">
+</p>
+
+<p align="center">
   <h1 align="center">🛒 E-commerce Backend API</h1>
 </p>
 
