@@ -1,16 +1,12 @@
 import { Module } from '@nestjs/common';
-import { OrdersController } from './orders.controller';
-import { OrdersService } from './orders.service';
-import { PrismaModule } from '../prisma/prisma.module';
-import { CouponsModule } from '../coupons/coupons.module'; // <- Importante
+import { OrderController } from './orders.controller';
+import { OrderService } from './orders.service';
+import { PrismaModule } from '../prisma/prisma.module'; // Ajuste o caminho do PrismaModule se necessário
 
 @Module({
-  imports: [
-    PrismaModule,
-    CouponsModule, // <- Necessário para o NestJS saber onde encontrar o CouponsService
-  ],
-  controllers: [OrdersController],
-  providers: [OrdersService],
-  exports: [OrdersService],
+  imports: [PrismaModule],
+  controllers: [OrderController],
+  providers: [OrderService],
+  exports: [OrderService],
 })
-export class OrdersModule {}
+export class OrderModule {}

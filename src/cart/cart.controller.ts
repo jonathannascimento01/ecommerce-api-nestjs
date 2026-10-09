@@ -1,37 +1,26 @@
-import { Controller, Get, Post, Delete, Body, Param, Req, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AddItemToCartDto } from './cart.dto';
 
-@UseGuards(JwtAuthGuard)
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  private getCustomerId(req: any): number {
-    // Procura por todas as variações, incluindo user_id
-    const id = req.user?.user_id || req.user?.customer_id || req.user?.userId || req.user?.id || req.user?.sub;
-    // Se o ID vier nulo, lançamos um erro claro em vez de um erro 500 silencioso
-    if (!id || isNaN(Number(id))) {
-      throw new BadRequestException('ID do utilizador não encontrado no token JWT.');
-    }
-    return Number(id);
-  }
-
   @Get()
-  getCart(@Req() req: any) {
-    const customer_id = this.getCustomerId(req);
-    return this.cartService.getCartByCustomer(customer_id);
+  async getCart(@Req() req: any) {
+    const customerId = req.user?.userId || 1; 
+    return this.cartService.getCart(customerId);
   }
 
   @Post('items')
-  addItem(@Req() req: any, @Body() body: { product_id: number; quantity: number }) {
-    const customer_id = this.getCustomerId(req);
-    return this.cartService.addItem(customer_id, body.product_id, body.quantity);
+  async addItem(@Req() req: any, @Body() dto: AddItemToCartDto) {
+    const customerId = req.user?.userId || 1;
+    return this.cartService.addItem(customerId, dto);
   }
 
-  @Delete('items/:productId')
-  removeItem(@Req() req: any, @Param('productId') productId: string) {
-    const customer_id = this.getCustomerId(req);
-    return this.cartService.removeItem(customer_id, +productId);
+  @Delete('items/:id')
+  async removeItem(@Req() req: any, @Param('id') id: string) {
+    const customerId = req.user?.userId || 1;
+    return this.cartService.removeItem(customerId, Number(id));
   }
 }

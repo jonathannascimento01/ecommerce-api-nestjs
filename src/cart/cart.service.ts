@@ -1,160 +1,117 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service'; // Ajuste se necessário para o caminho correto do seu PrismaService
+import { AddItemToCartDto } from './cart.dto';
 
 @Injectable()
 export class CartService {
   constructor(private prisma: PrismaService) {}
 
-  private serializeBigInt(data: any) {
-    return JSON.parse(
-      JSON.stringify(data, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
-    );
-  }
-
-  private async ensureCustomerExists(customer_id: number) {
-    const customer = await this.prisma.tbl_customers.findUnique({
-      where: { customer_id: BigInt(customer_id) },
-    });
-
-    if (!customer) {
-      // Vamos buscar o utilizador para copiar os dados
-      const user = await this.prisma.tbl_users.findUnique({
-        where: { user_id: Number(customer_id) },
-      });
-
-      if (!user) {
-        throw new BadRequestException('Utilizador não encontrado na tabela tbl_users.');
-      }
-
-      try {
-        // Criamos o cliente respeitando a exata nomenclatura do schema do Prisma
-        await this.prisma.tbl_customers.create({
-          data: {
-            customer_id: BigInt(customer_id),
-            full_name: user.name,
-            email: user.email,
-            password_hash: user.password, // <-- AQUI ESTAVA O PROBLEMA!
-          },
-        });
-      } catch (error) {
-        console.error('Erro fatal ao sincronizar cliente em tbl_customers:', error);
-        throw new BadRequestException('Falha ao criar o registo do cliente antes do carrinho.');
-      }
-    }
-  }
-
-  async getCartByCustomer(customer_id: number) {
-    if (!customer_id) {
-      throw new BadRequestException('ID do cliente não fornecido.');
-    }
-
-    await this.ensureCustomerExists(customer_id);
-
-    try {
-      let cart = await this.prisma.tbl_carts.findUnique({
-        where: { customer_id: BigInt(customer_id) },
-        include: {
-          tbl_cart_items: {
-            include: {
-              tbl_products: true,
-            },
-          },
-        },
-      });
-
-      if (!cart) {
-        cart = await this.prisma.tbl_carts.create({
-          data: { customer_id: BigInt(customer_id) },
-          include: {
-            tbl_cart_items: {
-              include: {
-                tbl_products: true,
-              },
-            },
-          },
-        });
-      }
-
-      return this.serializeBigInt(cart);
-    } catch (error: any) {
-      throw new BadRequestException(`Erro na base de dados: ${error?.message || 'Erro desconhecido'}`);
-    }
-  }
-
-  async addItem(customer_id: number, product_id: number, quantity: number) {
-    if (!customer_id) {
-      throw new BadRequestException('ID do cliente não fornecido.');
-    }
-    if (quantity <= 0) {
-      throw new BadRequestException('A quantidade deve ser maior que zero.');
-    }
-
-    const product = await this.prisma.tbl_products.findUnique({
-      where: { product_id: BigInt(product_id) },
-    });
-
-    if (!product) {
-      throw new NotFoundException(`Produto com ID ${product_id} não encontrado.`);
-    }
-
-    await this.ensureCustomerExists(customer_id);
-
+  private async getOrCreateCart(customerId: number) {
     let cart = await this.prisma.tbl_carts.findUnique({
-      where: { customer_id: BigInt(customer_id) },
+      where: { customer_id: BigInt(customerId) },
     });
 
     if (!cart) {
       cart = await this.prisma.tbl_carts.create({
-        data: { customer_id: BigInt(customer_id) },
+        data: { customer_id: BigInt(customerId) },
       });
     }
 
-    const cartItem = await this.prisma.tbl_cart_items.upsert({
+    return cart;
+  }
+
+  async getCart(customerId: number) {
+    const cart = await this.getOrCreateCart(customerId);
+
+    const items = await this.prisma.tbl_cart_items.findMany({
+      where: { cart_id: cart.cart_id },
+      include: {
+        tbl_products: {
+          include: {
+            tbl_product_images: true,
+          },
+        },
+      },
+    });
+
+    const formattedItems = items.map((item: any) => ({
+      cart_item_id: Number(item.cart_item_id),
+      product_id: Number(item.product_id),
+      quantity: item.quantity,
+      product: {
+        id: Number(item.tbl_products.product_id),
+        name: item.tbl_products.product_name,
+        price: Number(item.tbl_products.price),
+        promotional_price: item.tbl_products.promotional_price ? Number(item.tbl_products.promotional_price) : null,
+        sku: item.tbl_products.sku,
+        images: item.tbl_products.tbl_product_images.map((img: any) => img.image_url),
+      },
+      subtotal: Number(item.tbl_products.promotional_price || item.tbl_products.price) * item.quantity,
+    }));
+
+    const totalAmount = formattedItems.reduce((acc: number, item: any) => acc + item.subtotal, 0);
+
+    return {
+      cart_id: Number(cart.cart_id),
+      items: formattedItems,
+      total_amount: totalAmount,
+    };
+  }
+
+  async addItem(customerId: number, dto: AddItemToCartDto) {
+    const cart = await this.getOrCreateCart(customerId);
+
+    const product = await this.prisma.tbl_products.findUnique({
+      where: { product_id: BigInt(dto.product_id) },
+    });
+
+    if (!product || !product.active) {
+      throw new NotFoundException('Produto não encontrado ou inativo.');
+    }
+
+    const existingItem = await this.prisma.tbl_cart_items.findUnique({
       where: {
         cart_id_product_id: {
           cart_id: cart.cart_id,
-          product_id: BigInt(product_id),
+          product_id: BigInt(dto.product_id),
         },
-      },
-      update: {
-        quantity: quantity,
-      },
-      create: {
-        cart_id: cart.cart_id,
-        product_id: BigInt(product_id),
-        quantity: quantity,
-      },
-      include: {
-        tbl_products: true,
       },
     });
 
-    return this.serializeBigInt(cartItem);
+    if (existingItem) {
+      return await this.prisma.tbl_cart_items.update({
+        where: { cart_item_id: existingItem.cart_item_id },
+        data: { quantity: existingItem.quantity + dto.quantity },
+      });
+    }
+
+    return await this.prisma.tbl_cart_items.create({
+      data: {
+        cart_id: cart.cart_id,
+        product_id: BigInt(dto.product_id),
+        quantity: dto.quantity,
+      },
+    });
   }
 
-  async removeItem(customer_id: number, product_id: number) {
-    const cart = await this.prisma.tbl_carts.findUnique({
-      where: { customer_id: BigInt(customer_id) },
+  async removeItem(customerId: number, itemId: number) {
+    const cart = await this.getOrCreateCart(customerId);
+
+    const item = await this.prisma.tbl_cart_items.findFirst({
+      where: {
+        cart_item_id: BigInt(itemId),
+        cart_id: cart.cart_id,
+      },
     });
 
-    if (!cart) {
-      throw new NotFoundException('Carrinho não encontrado para este cliente.');
+    if (!item) {
+      throw new NotFoundException('Item não encontrado no seu carrinho.');
     }
 
-    try {
-      const deleted = await this.prisma.tbl_cart_items.delete({
-        where: {
-          cart_id_product_id: {
-            cart_id: cart.cart_id,
-            product_id: BigInt(product_id),
-          },
-        },
-      });
-      return { message: 'Item removido com sucesso do carrinho.', item: this.serializeBigInt(deleted) };
-    } catch (error) {
-      throw new NotFoundException('Item não encontrado no carrinho.');
-    }
+    await this.prisma.tbl_cart_items.delete({
+      where: { cart_item_id: BigInt(itemId) },
+    });
+
+    return { message: 'Item removido do carrinho com sucesso.' };
   }
 }

@@ -2,20 +2,17 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { CouponsModule } from './coupons/coupons.module';
-import { OrdersModule } from './orders/orders.module';
-import { ProductsModule } from './products/products.module'; // 1. Importe aqui
+import { CartModule } from './cart/cart.module';
+import { OrderModule } from './orders/orders.module';
+import { WishlistModule } from './wishlist/wishlist.module'; // 1. Importar o módulo aqui
 
 @Module({
   imports: [
     PrismaModule,
-    UsersModule,
-    AuthModule,
-    CouponsModule,
-    OrdersModule,
-    ProductsModule, // 2. Adicione aqui nos imports
+    CartModule,
+    OrderModule,
+    WishlistModule, // 2. Registar o módulo aqui
+    // ... outros módulos que possa ter (Products, Auth, etc.)
   ],
   controllers: [AppController],
   providers: [AppService],
