@@ -1,3 +1,4 @@
+import { ProductsModule } from './products/products.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,8 +12,8 @@ import { WishlistModule } from './wishlist/wishlist.module'; // 1. Importar o m�
     PrismaModule,
     CartModule,
     OrderModule,
-    WishlistModule, // 2. Registar o módulo aqui
-    // ... outros módulos que possa ter (Products, Auth, etc.)
+    WishlistModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
