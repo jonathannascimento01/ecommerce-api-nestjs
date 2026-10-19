@@ -8,17 +8,17 @@ datasource db {
 }
 
 model tbl_brands {
-  brand_id     BigInt       @id @default(autoincrement())
-  brand_name   String       @unique(map: "uq_tbl_brands_name") @db.VarChar(80)
-  active       Boolean      @default(true)
-  created_at   DateTime     @default(now()) @db.Timestamp(6)
+  brand_id     BigInt         @id @default(autoincrement())
+  brand_name   String         @unique(map: "uq_tbl_brands_name") @db.VarChar(80)
+  active       Boolean        @default(true)
+  created_at   DateTime       @default(now()) @db.Timestamp(6)
   tbl_products tbl_products[]
 
   @@index([active], map: "idx_tbl_brands_active")
 }
 
 model tbl_addresses {
-  address_id   Int      @id @default(autoincrement())
+  address_id   Int          @id @default(autoincrement())
   user_id      Int
   street       String
   number       String
@@ -27,7 +27,7 @@ model tbl_addresses {
   city         String
   state        String
   zip_code     String
-  created_at   DateTime @default(now())
+  created_at   DateTime     @default(now())
   
   tbl_users    tbl_users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   tbl_orders   tbl_orders[]
@@ -55,27 +55,27 @@ model tbl_carts {
 }
 
 model tbl_categories {
-  category_id   BigInt       @id @default(autoincrement())
-  category_name String       @unique(map: "uq_tbl_categories_name") @db.VarChar(50)
-  active        Boolean      @default(true)
-  created_at    DateTime     @default(now()) @db.Timestamp(6)
+  category_id   BigInt         @id @default(autoincrement())
+  category_name String         @unique(map: "uq_tbl_categories_name") @db.VarChar(50)
+  active        Boolean        @default(true)
+  created_at    DateTime       @default(now()) @db.Timestamp(6)
   tbl_products  tbl_products[]
 
   @@index([active], map: "idx_tbl_categories_active")
 }
 
 model tbl_coupons {
-  coupon_id      BigInt       @id @default(autoincrement())
-  coupon_code    String       @unique(map: "uq_tbl_coupons_code") @db.VarChar(30)
-  description    String?      @db.VarChar(150)
-  discount_type  String       @db.VarChar(20)
-  discount_value Decimal      @db.Decimal(10, 2)
-  minimum_value  Decimal?     @db.Decimal(10, 2)
-  start_date     DateTime     @db.Timestamp(6)
-  end_date       DateTime     @db.Timestamp(6)
-  max_uses       Int?
-  active         Boolean      @default(true)
-  tbl_orders     tbl_orders[]
+  coupon_id     BigInt       @id @default(autoincrement())
+  coupon_code   String       @unique(map: "uq_tbl_coupons_code") @db.VarChar(30)
+  description   String?      @db.VarChar(150)
+  discount_type String       @db.VarChar(20)
+  discount_value Decimal     @db.Decimal(10, 2)
+  minimum_value Decimal?     @db.Decimal(10, 2)
+  start_date    DateTime     @db.Timestamp(6)
+  end_date      DateTime     @db.Timestamp(6)
+  max_uses      Int?
+  active        Boolean      @default(true)
+  tbl_orders    tbl_orders[]
 
   @@index([coupon_code], map: "idx_tbl_coupons_code")
 }
@@ -109,21 +109,21 @@ model tbl_order_items {
 }
 
 model tbl_orders {
-  order_id        BigInt          @id @default(autoincrement())
+  order_id        BigInt            @id @default(autoincrement())
   customer_id     BigInt
   coupon_id       BigInt?
   address_id      Int?
-  order_number    String          @unique(map: "uq_tbl_orders_number") @db.VarChar(30)
-  subtotal_amount Decimal         @db.Decimal(12, 2)
-  discount_amount Decimal         @default(0) @db.Decimal(12, 2)
-  shipping_amount Decimal         @default(0) @db.Decimal(12, 2)
-  total_amount    Decimal         @db.Decimal(12, 2)
-  status          String          @db.VarChar(20)
-  created_at      DateTime        @default(now()) @db.Timestamp(6)
+  order_number    String            @unique(map: "uq_tbl_orders_number") @db.VarChar(30)
+  subtotal_amount Decimal           @db.Decimal(12, 2)
+  discount_amount Decimal           @default(0) @db.Decimal(12, 2)
+  shipping_amount Decimal           @default(0) @db.Decimal(12, 2)
+  total_amount    Decimal           @db.Decimal(12, 2)
+  status          String            @db.VarChar(20)
+  created_at      DateTime          @default(now()) @db.Timestamp(6)
   tbl_order_items tbl_order_items[]
-  tbl_coupons     tbl_coupons?    @relation(fields: [coupon_id], references: [coupon_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_coupon")
-  tbl_customers   tbl_customers   @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_customer")
-  tbl_addresses   tbl_addresses?  @relation(fields: [address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_address")
+  tbl_coupons     tbl_coupons?      @relation(fields: [coupon_id], references: [coupon_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_coupon")
+  tbl_customers   tbl_customers     @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_customer")
+  tbl_addresses   tbl_addresses?    @relation(fields: [address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_address")
   tbl_payments    tbl_payments?
 }
 
@@ -208,12 +208,12 @@ model tbl_wishlist {
 }
 
 model tbl_users {
-  user_id    Int      @id @default(autoincrement())
+  user_id    Int             @id @default(autoincrement())
   name       String
-  email      String   @unique
+  email      String          @unique
   password   String
-  role       String   @default("customer")
-  active     Boolean  @default(true)
-  created_at DateTime @default(now())
+  role       String          @default("customer")
+  active     Boolean         @default(true)
+  created_at DateTime        @default(now())
   addresses  tbl_addresses[]
 }

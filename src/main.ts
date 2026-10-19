@@ -6,9 +6,9 @@ async function bootstrap() {
 
   app.enableCors();
 
-  await app.listen(3000);
+  await app.listen(4000);
 
-  console.log('API rodando em http://localhost:3000');
+  console.log('API rodando em http://localhost:4000');
 }
 
 bootstrap();
