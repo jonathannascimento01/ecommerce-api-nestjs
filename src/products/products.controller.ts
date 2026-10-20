@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -13,6 +13,12 @@ export class ProductsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.productsService.findOne(Number(id));
+  }
+
+  // Adicione este método Post para permitir cadastrar novos produtos
+  @Post()
+  async create(@Body() createDto: any) {
+    return await this.productsService.create(createDto);
   }
 
   @Patch(':id')

@@ -46,10 +46,79 @@ export class ProductsService {
     return this.serializeData(product);
   }
 
+  // Criar um novo produto (suportando o seed e o painel admin)
+  async create(createDto: any) {
+    try {
+      // 1. Garantir que existe uma marca padrão (ex: Natura/Avon) se não vier no DTO
+      let brandId = createDto.brand_id;
+      if (!brandId) {
+        let defaultBrand = await this.prisma.tbl_brands.findFirst({
+          where: { brand_name: 'Natura / Avon' },
+        });
+        if (!defaultBrand) {
+          defaultBrand = await this.prisma.tbl_brands.create({
+            data: { brand_name: 'Natura / Avon' },
+          });
+        }
+        brandId = defaultBrand.brand_id;
+      }
+
+      // 2. Garantir que existe uma categoria padrão se não vier no DTO
+      let categoryId = createDto.category_id;
+      if (!categoryId) {
+        let defaultCategory = await this.prisma.tbl_categories.findFirst({
+          where: { category_name: 'Geral' },
+        });
+        if (!defaultCategory) {
+          defaultCategory = await this.prisma.tbl_categories.create({
+            data: { category_name: 'Geral' },
+          });
+        }
+        categoryId = defaultCategory.category_id;
+      }
+
+      // 3. Criar o produto ligando às relações corretas do Prisma
+      const newProduct = await this.prisma.tbl_products.create({
+        data: {
+          product_name: createDto.product_name,
+          sku: createDto.sku,
+          price: createDto.price,
+          description: createDto.description,
+          active: true,
+          brand_id: BigInt(brandId),
+          category_id: BigInt(categoryId),
+          // Inserir imagem na tabela relacional tbl_product_images se fornecida
+          tbl_product_images: createDto.image_url ? {
+            create: {
+              image_url: createDto.image_url,
+              sort_order: 1,
+            }
+          } : undefined,
+          // Criar stock inicial zerado ou padrão
+          tbl_stock: {
+            create: {
+              quantity: 100, // Stock inicial para testes
+            }
+          }
+        },
+        include: {
+          tbl_brands: true,
+          tbl_categories: true,
+          tbl_stock: true,
+          tbl_product_images: true,
+        },
+      });
+
+      return this.serializeData(newProduct);
+    } catch (error) {
+      console.error('ERRO AO CRIAR O PRODUTO:', error);
+      throw error;
+    }
+  }
+
   // Atualizar um produto existente
   async update(id: number | bigint, updateDto: any) {
     try {
-      // Verificar se o produto existe antes de atualizar
       await this.findOne(id);
 
       const updatedProduct = await this.prisma.tbl_products.update({

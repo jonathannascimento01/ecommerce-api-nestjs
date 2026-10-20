@@ -1,5 +1,5 @@
+export const instant = false;
 import Link from "next/link";
-
 async function getOrders() {
   try {
     const res = await fetch("http://localhost:4000/orders", {
