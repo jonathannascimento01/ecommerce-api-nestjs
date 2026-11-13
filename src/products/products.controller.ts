@@ -45,6 +45,13 @@ export class ProductsController {
   ) {
     return await this.productsService.updateStock(Number(id), quantity);
   }
+  @Post(':id/image')
+  async saveProductImage(
+    @Param('id') id: string,
+    @Body('imageUrl') imageUrl: string,
+  ) {
+    return await this.productsService.saveProductImage(Number(id), imageUrl);
+  }
 
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))

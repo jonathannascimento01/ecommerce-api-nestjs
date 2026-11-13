@@ -17,6 +17,9 @@ export class ProductsService {
         tbl_brands: true,
         tbl_categories: true,
         tbl_stock: true,
+        tbl_product_images: {
+          orderBy: { sort_order: 'asc' },
+        },
       },
       orderBy: {
         product_name: 'asc',
@@ -59,6 +62,8 @@ export class ProductsService {
         let subtotalAmount = 0;
         const orderItemsData: Array<{
           product_id: bigint;
+          sku: string;
+          product_name: string;
           quantity: number;
           unit_price: number;
           subtotal: number;
@@ -88,6 +93,8 @@ export class ProductsService {
 
           orderItemsData.push({
             product_id: prodId,
+            sku: product.sku,
+            product_name: product.product_name,
             quantity: item.quantity,
             unit_price: unitPrice,
             subtotal: itemSubtotal,
@@ -105,7 +112,12 @@ export class ProductsService {
             total_amount: subtotalAmount,
             status: 'PENDENTE',
             tbl_order_items: {
-              create: orderItemsData,
+              create: orderItemsData.map((i) => ({
+                product_id: i.product_id,
+                quantity: i.quantity,
+                unit_price: i.unit_price,
+                subtotal: i.subtotal,
+              })),
             },
           },
         });
@@ -129,12 +141,48 @@ export class ProductsService {
           });
         }
 
-        return { orderNumber, totalAmount: subtotalAmount };
+        return { orderNumber, totalAmount: subtotalAmount, orderItemsData };
       });
+
+      // Disparo automático direto para os dois números de WhatsApp da loja (via CallMeBot)
+      const itemsText = result.orderItemsData
+        .map(
+          (i) =>
+            `- ${i.quantity}x ${i.product_name} (Cód. ${i.sku}) - R$ ${i.subtotal
+              .toFixed(2)
+              .replace('.', ',')}`,
+        )
+        .join('\n');
+
+      const whatsappMsg =
+        `*NOVO PEDIDO - KEZAM STORE*\n\n` +
+        `*Pedido*: #${result.orderNumber}\n` +
+        `*Cliente*: ${customerName}\n` +
+        `*Contato*: ${customerPhone}\n\n` +
+        `*Itens do Pedido*:\n${itemsText}\n\n` +
+        `*Total*: R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`;
+
+      const targets = [
+        { phone: '558197422792', apiKey: '7693734' },
+        { phone: '5511995449855', apiKey: 'SUA_APIKEY_NUMERO_2' },
+      ];
+
+      for (const target of targets) {
+        if (target.apiKey && !target.apiKey.startsWith('SUA_')) {
+          const url = `https://api.callmebot.com/whatsapp.php?phone=${target.phone}&text=${encodeURIComponent(
+            whatsappMsg,
+          )}&apikey=${target.apiKey}`;
+          fetch(url).catch((err) =>
+            console.error(`Falha ao notificar WhatsApp (${target.phone}):`, err),
+          );
+        }
+      }
 
       return {
         success: true,
-        message: `Pedido #${result.orderNumber} realizado com sucesso! Total: R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`,
+        message: `Pedido #${result.orderNumber} realizado com sucesso! Total: R$ ${result.totalAmount
+          .toFixed(2)
+          .replace('.', ',')}`,
         orderNumber: result.orderNumber,
       };
     } catch (error: any) {
@@ -216,6 +264,43 @@ export class ProductsService {
       };
     } catch (error: any) {
       return { success: false, message: `Erro ao ajustar estoque: ${error.message}` };
+    }
+  }
+
+  async saveProductImage(productId: number, imageUrl: string) {
+    try {
+      const prodId = BigInt(productId);
+      const cleanUrl = imageUrl.trim();
+
+      if (!cleanUrl) {
+        return { success: false, message: 'Informe uma URL de imagem válida.' };
+      }
+
+      const existingImage = await this.prisma.tbl_product_images.findFirst({
+        where: { product_id: prodId, sort_order: 1 },
+      });
+
+      if (existingImage) {
+        await this.prisma.tbl_product_images.update({
+          where: { image_id: existingImage.image_id },
+          data: { image_url: cleanUrl },
+        });
+      } else {
+        await this.prisma.tbl_product_images.create({
+          data: {
+            product_id: prodId,
+            image_url: cleanUrl,
+            sort_order: 1,
+          },
+        });
+      }
+
+      return {
+        success: true,
+        message: 'Imagem do produto salva com sucesso!',
+      };
+    } catch (error: any) {
+      return { success: false, message: `Erro ao salvar imagem: ${error.message}` };
     }
   }
 
