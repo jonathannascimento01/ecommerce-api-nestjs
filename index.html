@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kezam Store - Importação de Produtos</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 40px; background: #f4f4f9;">
+
+    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #4f46e5; text-align: center;">Kezam Store - Painel Administrativo</h2>
+        
+        <div style="margin: 20px 0; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; text-align: center;">
+            <h3>📂 Importação em Lote de Produtos</h3>
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 15px;">
+                Selecione a sua planilha (.xlsx ou .csv) para carregar os produtos automaticamente. A IA gerará as descrições em falta!
+            </p>
+            
+            <input type="file" id="excelFile" accept=".xlsx, .csv" style="display: none;" onchange="handleFileSelected(event)" />
+            
+            <button onclick="document.getElementById('excelFile').click()" style="background: #4f46e5; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                Escolher Planilha
+            </button>
+            
+            <div id="fileName" style="margin-top: 15px; font-style: italic; color: #334155; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function handleFileSelected(event) {
+            const fileInput = event.target;
+            const fileNameSpan = document.getElementById('fileName');
+            
+            if (!fileInput.files || fileInput.files.length === 0) return;
+            
+            const file = fileInput.files[0];
+            fileNameSpan.textContent = `Ficheiro selecionado: ${file.name}`;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                fileNameSpan.textContent = 'A importar produtos... ⏳';
+                
+                const response = await fetch('http://127.0.0.1:4000/products/import', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Sucesso! ${result.message}`);
+                    fileNameSpan.textContent = `✅ ${result.message}`;
+                } else {
+                    alert(`Erro na importação: ${result.message}`);
+                    fileNameSpan.textContent = '❌ Falha na importação.';
+                }
+            } catch (error) {
+                console.error('Erro de rede:', error);
+                alert('Erro ao comunicar com o servidor backend.');
+                fileNameSpan.textContent = '❌ Erro de conexão com o servidor.';
+            } finally {
+                fileInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

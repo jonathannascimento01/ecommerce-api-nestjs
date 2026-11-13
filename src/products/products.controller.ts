@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -10,19 +20,38 @@ export class ProductsController {
     return await this.productsService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.productsService.findOne(Number(id));
+  @Post('checkout')
+  async checkout(@Body() body: any) {
+    return await this.productsService.createCheckout(body);
   }
 
-  // Adicione este método Post para permitir cadastrar novos produtos
-  @Post()
-  async create(@Body() createDto: any) {
-    return await this.productsService.create(createDto);
+  @Get('orders')
+  async findAllOrders() {
+    return await this.productsService.findAllOrders();
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateDto: any) {
-    return await this.productsService.update(Number(id), updateDto);
+  @Patch('orders/:id/status')
+  async updateOrderStatus(
+    @Param('id') id: string,
+    @Body('status') status: string,
+  ) {
+    return await this.productsService.updateOrderStatus(Number(id), status);
+  }
+
+  @Patch(':id/stock')
+  async updateStock(
+    @Param('id') id: string,
+    @Body('quantity') quantity: number,
+  ) {
+    return await this.productsService.updateStock(Number(id), quantity);
+  }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  async importProducts(@UploadedFile() file: any) {
+    if (!file) {
+      return { success: false, message: 'Nenhum ficheiro foi enviado.' };
+    }
+    return await this.productsService.importFromExcel(file.buffer);
   }
 }
