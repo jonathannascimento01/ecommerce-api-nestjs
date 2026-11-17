@@ -30,10 +30,11 @@ export class ProductsService {
   async createCheckout(payload: {
     customerName: string;
     customerPhone: string;
+    customerAddress?: string;
     items: Array<{ product_id: number; quantity: number; price: number }>;
   }) {
     try {
-      const { customerName, customerPhone, items } = payload;
+      const { customerName, customerPhone, customerAddress, items } = payload;
 
       if (!items || items.length === 0) {
         return { success: false, message: 'O carrinho está vazio.' };
@@ -56,6 +57,11 @@ export class ProductsService {
               password_hash: 'checkout_rapido',
               active: true,
             },
+          });
+        } else if (customer.full_name !== customerName) {
+          customer = await tx.tbl_customers.update({
+            where: { customer_id: customer.customer_id },
+            data: { full_name: customerName },
           });
         }
 
@@ -106,6 +112,7 @@ export class ProductsService {
           data: {
             customer_id: customer.customer_id,
             order_number: orderNumber,
+            customer_address: customerAddress?.trim() || 'Não informado',
             subtotal_amount: subtotalAmount,
             discount_amount: 0,
             shipping_amount: 0,
@@ -144,7 +151,6 @@ export class ProductsService {
         return { orderNumber, totalAmount: subtotalAmount, orderItemsData };
       });
 
-      // Disparo automático direto para os dois números de WhatsApp da loja (via CallMeBot)
       const itemsText = result.orderItemsData
         .map(
           (i) =>
@@ -154,11 +160,16 @@ export class ProductsService {
         )
         .join('\n');
 
+      const addressText = customerAddress?.trim()
+        ? `\n*Endereço*: ${customerAddress.trim()}`
+        : '';
+
       const whatsappMsg =
         `*NOVO PEDIDO - KEZAM STORE*\n\n` +
         `*Pedido*: #${result.orderNumber}\n` +
         `*Cliente*: ${customerName}\n` +
-        `*Contato*: ${customerPhone}\n\n` +
+        `*Contato*: ${customerPhone}` +
+        `${addressText}\n\n` +
         `*Itens do Pedido*:\n${itemsText}\n\n` +
         `*Total*: R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`;
 
@@ -210,16 +221,60 @@ export class ProductsService {
     });
   }
 
-  async updateOrderStatus(orderId: number, status: string) {
+  async updateOrderStatus(orderId: number, status: string, reason?: string) {
     try {
       const id = BigInt(orderId);
-      const updated = await this.prisma.tbl_orders.update({
+
+      const currentOrder = await this.prisma.tbl_orders.findUnique({
         where: { order_id: id },
-        data: { status },
+        include: { tbl_order_items: true },
       });
+
+      if (!currentOrder) {
+        return { success: false, message: 'Pedido não encontrado.' };
+      }
+
+      if (status === 'CANCELADO' && (!reason || !reason.trim())) {
+        return { success: false, message: 'É obrigatório informar a justificativa do cancelamento.' };
+      }
+
+      await this.prisma.$transaction(async (tx) => {
+        await tx.tbl_orders.update({
+          where: { order_id: id },
+          data: {
+            status,
+            cancellation_reason: status === 'CANCELADO' ? reason!.trim() : null,
+          },
+        });
+
+        if (status === 'CANCELADO' && currentOrder.status !== 'CANCELADO') {
+          for (const item of currentOrder.tbl_order_items) {
+            await tx.tbl_stock.update({
+              where: { product_id: item.product_id },
+              data: {
+                quantity: { increment: item.quantity },
+                updated_at: new Date(),
+              },
+            });
+
+            await tx.tbl_stock_movements.create({
+              data: {
+                product_id: item.product_id,
+                movement_type: 'ENTRADA',
+                quantity: item.quantity,
+                reason: `Estorno Cancelamento Pedido #${currentOrder.order_number}`,
+              },
+            });
+          }
+        }
+      });
+
       return {
         success: true,
-        message: `Status do pedido #${updated.order_number} atualizado para ${status}.`,
+        message:
+          status === 'CANCELADO'
+            ? `Pedido #${currentOrder.order_number} cancelado e movido para o Histórico (estoque estornado).`
+            : `Status do pedido #${currentOrder.order_number} atualizado para ${status}.`,
       };
     } catch (error: any) {
       return { success: false, message: `Erro ao atualizar pedido: ${error.message}` };
@@ -379,7 +434,7 @@ export class ProductsService {
           });
         }
 
-        let description = `Produto oficial ${brandName} - ${productName}.`;
+        let description = `Produto oficial ${brandName} ${productName}.`;
         try {
           const aiDesc = await this.geminiService.generateProductDescription(productName, categoryName);
           if (aiDesc) description = aiDesc;

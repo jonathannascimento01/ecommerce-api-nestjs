@@ -33,9 +33,9 @@ export class ProductsController {
   @Patch('orders/:id/status')
   async updateOrderStatus(
     @Param('id') id: string,
-    @Body('status') status: string,
+    @Body() body: { status: string; reason?: string },
   ) {
-    return await this.productsService.updateOrderStatus(Number(id), status);
+    return this.productsService.updateOrderStatus(Number(id), body.status, body.reason);
   }
 
   @Patch(':id/stock')
