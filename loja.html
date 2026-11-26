@@ -3,8 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KEZAM Store - Beleza e Sofisticação</title>
+  <title>EFK Perfumaria e Cosmético — Painel de Gestão</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c3b2e' stroke='%23d4af37' stroke-width='4'/%3E%3Ctext x='32' y='40' text-anchor='middle' fill='%23f6e29c' font-family='Georgia,serif' font-weight='bold' font-size='22'%3EEFK%3C/text%3E%3C/svg%3E" />
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background: #fafafa; color: #111827; }
+    header nav li.nav-item {
+      position: relative !important;
+      list-style: none !important;
+    }
+    header nav a.nav-link {
+      text-decoration: none;
+      color: #334155;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 0;
+      display: inline-block;
+    }
+    header nav a.nav-link:hover {
+      color: #db2777;
+    }
+    header nav .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #ffffff;
+      min-width: 170px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e2e8f0;
+      padding: 8px 0;
+      z-index: 1000;
+    }
+    header nav li.nav-item:hover .dropdown-menu {
+      display: flex;
+      flex-direction: column;
+    }
+    header nav .dropdown-menu a {
+      padding: 9px 16px;
+      font-size: 13.5px;
+      color: #334155;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    header nav .dropdown-menu a:hover {
+      background: #fdf2f8;
+      color: #db2777;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
     html { scroll-behavior: smooth; }
     body { background: #fafafa; color: #111827; }
@@ -16,6 +63,75 @@
     .nav-menu { display: flex; gap: 20px; align-items: center; }
     .nav-menu a { text-decoration: none; color: #4b5563; font-size: 14px; font-weight: 500; transition: color 0.2s; cursor: pointer; white-space: nowrap; }
     .nav-menu a:hover, .nav-menu a.active { color: #db2777; font-weight: 600; }
+
+    /* Menu Cascata (Dropdown) no Cabeçalho */
+    .nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nav-dropdown > a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-dropdown::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 12px;
+    }
+
+    .nav-submenu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 185px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+      padding: 6px;
+      z-index: 999;
+      flex-direction: column;
+      gap: 2px;
+      animation: navCascadeFade 0.18s ease-out;
+    }
+
+    .nav-dropdown:hover .nav-submenu {
+      display: flex;
+    }
+
+    .nav-submenu button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #334155;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-submenu button:hover {
+      background: #fdf2f8;
+      color: #db2777;
+      font-weight: 600;
+    }
+
+    @keyframes navCascadeFade {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .header-search { position: relative; display: flex; align-items: center; width: 240px; }
     .header-search svg { position: absolute; left: 14px; color: #9ca3af; pointer-events: none; }
@@ -32,7 +148,7 @@
     .bag-count { position: absolute; top: 0; right: -2px; background: #db2777; color: white; font-size: 11px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-   .hero {
+    .hero {
       margin-top: 28px;
       border-radius: 24px;
       padding: 56px;
@@ -74,6 +190,10 @@
       0% { transform: translateY(-50%) scale(0.95); opacity: 0.55; }
       100% { transform: translateY(-50%) scale(1.18); opacity: 0.95; }
     }
+
+    .hero-tag { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #f472b6; text-transform: uppercase; margin-bottom: 14px; }
+    .hero h1 { font-size: 38px; font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+    .hero p { font-size: 15px; color: #e2e8f0; line-height: 1.6; max-width: 440px; }
 
     .brands-orbit { position: relative; height: 270px; width: 100%; display: flex; align-items: center; justify-content: center; }
     .orbit-ring { position: absolute; width: 240px; height: 240px; border-radius: 50%; border: 1px dashed rgba(244, 114, 182, 0.25); animation: spinSlow 28s linear infinite; pointer-events: none; }
@@ -120,9 +240,9 @@
     .product-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(17, 24, 39, 0.65); z-index: 45; align-items: center; justify-content: center; padding: 20px; }
     .product-modal-overlay.open { display: flex; }
     .product-modal-card { background: #ffffff; border-radius: 24px; max-width: 720px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25); display: grid; grid-template-columns: 1fr 1.2fr; position: relative; }
-    .auth-modal-card { background: #ffffff; border-radius: 24px; max-width: 440px; width: 100%; padding: 32px 28px; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25); position: relative; }
+    .auth-modal-card { background: #ffffff; border-radius: 24px; max-width: 460px; width: 100%; padding: 30px 28px; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25); position: relative; max-height: 92vh; overflow-y: auto; }
     .auth-modal-card h2 { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 6px; }
-    .auth-modal-card p { font-size: 13px; color: #6b7280; margin-bottom: 20px; line-height: 1.5; }
+    .auth-modal-card p { font-size: 13px; color: #6b7280; margin-bottom: 18px; line-height: 1.5; }
     .field-label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
     .product-modal-close { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; border: none; background: #f3f4f6; color: #374151; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .product-modal-img-box { background: #f9fafb; display: flex; align-items: center; justify-content: center; padding: 28px; min-height: 280px; }
@@ -162,6 +282,8 @@
     .locked-badge { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 999px; font-size: 10px; }
     .customer-input { width: 100%; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 10px; margin-bottom: 8px; font-size: 13px; background: #ffffff; }
     .customer-input[readonly] { background: #f1f5f9; color: #475569; border-color: #cbd5e1; cursor: not-allowed; user-select: none; }
+    .quick-login-btn { padding: 0 12px; border-radius: 10px; border: 1px solid #db2777; background: #fdf2f8; color: #db2777; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .quick-login-btn:hover { background: #db2777; color: #ffffff; }
     .checkout-btn { width: 100%; background: #db2777; color: white; border: none; padding: 13px; border-radius: 999px; font-weight: 700; font-size: 14px; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
     .checkout-btn:hover { background: #be185d; }
     .checkout-btn:disabled { background: #9ca3af; cursor: not-allowed; }
@@ -186,18 +308,90 @@
   </style>
 </head>
 <body>
-  <header>
-    <a href="#" class="logo" onclick="selectBrandNav(''); return false;">
-      KEZAM <span class="logo-badge">Store</span>
+<header>
+    <a href="#" class="logo" onclick="selectBrandNav('', ''); return false;" style="display: flex; align-items: center; text-decoration: none; position: relative; z-index: 25; margin-right: 12px;">
+      <div style="width: 82px; height: 82px; margin-bottom: -24px; border-radius: 18px; overflow: hidden; border: 2.5px solid #d4af37; background: radial-gradient(circle at 30% 30%, #134e3e, #072920); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+        <img 
+          src="assets/logo-efk.jpg" 
+          onerror="this.style.display='none'; document.getElementById('efkCrestSvg').style.display='block';" 
+          alt="EFK Perfumaria e Cosmético" 
+          style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+        />
+        <svg id="efkCrestSvg" viewBox="0 0 120 120" style="display: none; width: 74px; height: 74px;">
+          <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f6e29c" />
+              <stop offset="50%" stop-color="#d4af37" />
+              <stop offset="100%" stop-color="#e5a98c" />
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="56" r="46" fill="none" stroke="url(#goldGrad)" stroke-width="1.6" stroke-dasharray="3 2" />
+          <circle cx="60" cy="56" r="41" fill="none" stroke="url(#goldGrad)" stroke-width="0.9" />
+          <path d="M60 10 C63 14, 57 14, 60 10 M32 22 C36 24, 32 28, 32 22 M88 22 C84 24, 88 28, 88 22 M20 56 C24 53, 24 59, 20 56 M100 56 C96 53, 96 59, 100 56" stroke="url(#goldGrad)" stroke-width="2" fill="none" />
+          <text x="60" y="64" text-anchor="middle" fill="url(#goldGrad)" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="27" letter-spacing="1">EFK</text>
+          <text x="60" y="79" text-anchor="middle" fill="#f3d999" font-family="Arial, sans-serif" font-weight="600" font-size="6.2" letter-spacing="1.2">PERFUMARIA</text>
+          <text x="60" y="87" text-anchor="middle" fill="#e5a98c" font-family="Arial, sans-serif" font-weight="600" font-size="5.8" letter-spacing="1">&amp; COSMÉTICO</text>
+        </svg>
+      </div>
     </a>
 
     <div class="nav-center">
       <nav class="nav-menu">
-        <a class="active" data-brand="" onclick="selectBrandNav('')">Início</a>
-        <a data-brand="Natura" onclick="selectBrandNav('Natura')">Natura</a>
-        <a data-brand="Avon" onclick="selectBrandNav('Avon')">Avon</a>
-        <a data-brand="O Boticário" onclick="selectBrandNav('O Boticário')">O Boticário</a>
-        <a data-brand="Eudora" onclick="selectBrandNav('Eudora')">Eudora</a>
+        <a data-brand="" class="active" onclick="selectBrandNav('', '')">Início</a>
+
+        <div class="nav-dropdown">
+          <a data-brand="Natura" onclick="selectBrandNav('Natura', '')">Natura ▾</a>
+          <div class="nav-submenu">
+            <button onclick="selectBrandNav('Natura', 'Perfume')">Perfume</button>
+            <button onclick="selectBrandNav('Natura', 'Cabelo')">Cabelo</button>
+            <button onclick="selectBrandNav('Natura', 'Maquiagem')">Maquiagem</button>
+            <button onclick="selectBrandNav('Natura', 'Hidratante')">Hidratante</button>
+            <button onclick="selectBrandNav('Natura', 'Limpeza')">Limpeza</button>
+          </div>
+        </div>
+
+        <div class="nav-dropdown">
+          <a data-brand="Avon" onclick="selectBrandNav('Avon', '')">Avon ▾</a>
+          <div class="nav-submenu">
+            <button onclick="selectBrandNav('Avon', 'Perfume')">Perfume</button>
+            <button onclick="selectBrandNav('Avon', 'Cabelo')">Cabelo</button>
+            <button onclick="selectBrandNav('Avon', 'Maquiagem')">Maquiagem</button>
+            <button onclick="selectBrandNav('Avon', 'Hidratante')">Hidratante</button>
+            <button onclick="selectBrandNav('Avon', 'Limpeza')">Limpeza</button>
+          </div>
+        </div>
+
+        <div class="nav-dropdown">
+          <a data-brand="O Boticário" onclick="selectBrandNav('O Boticário', '')">O Boticário ▾</a>
+          <div class="nav-submenu">
+            <button onclick="selectBrandNav('O Boticário', 'Perfume')">Perfume</button>
+            <button onclick="selectBrandNav('O Boticário', 'Cabelo')">Cabelo</button>
+            <button onclick="selectBrandNav('O Boticário', 'Maquiagem')">Maquiagem</button>
+            <button onclick="selectBrandNav('O Boticário', 'Hidratante')">Hidratante</button>
+            <button onclick="selectBrandNav('O Boticário', 'Limpeza')">Limpeza</button>
+          </div>
+        </div>
+
+        <div class="nav-dropdown">
+          <a data-brand="Eudora" onclick="selectBrandNav('Eudora', '')">Eudora ▾</a>
+          <div class="nav-submenu">
+            <button onclick="selectBrandNav('Eudora', 'Perfume')">Perfume</button>
+            <button onclick="selectBrandNav('Eudora', 'Cabelo')">Cabelo</button>
+            <button onclick="selectBrandNav('Eudora', 'Maquiagem')">Maquiagem</button>
+            <button onclick="selectBrandNav('Eudora', 'Hidratante')">Hidratante</button>
+            <button onclick="selectBrandNav('Eudora', 'Limpeza')">Limpeza</button>
+          </div>
+        </div>
+
+        <div class="nav-dropdown">
+          <a data-brand="Diversos" onclick="selectBrandNav('Diversos', '')">Diversos ▾</a>
+          <div class="nav-submenu">
+            <button onclick="selectBrandNav('Diversos', 'Catálogo')">Catálogos</button>
+            <button onclick="selectBrandNav('Diversos', 'Amostra')">Amostras</button>
+            <button onclick="selectBrandNav('Diversos', 'Brinde')">Brindes</button>
+            <button onclick="selectBrandNav('Diversos', 'Outras Marcas')">Outras Marcas</button>
+          </div>
+        </div>
       </nav>
 
       <div class="header-search">
@@ -235,26 +429,33 @@
         <div class="hero-tag">COLEÇÃO EXCLUSIVA &amp; MODERNA</div>
         <h1>Beleza e Sofisticação em Cada Detalhe</h1>
         <p>Descubra a nossa linha selecionada de produtos otimizados para realçar o seu estilo com máxima qualidade.</p>
-        
       </div>
 
       <div class="brands-orbit">
         <div class="orbit-ring"></div>
         <div class="orbit-ring-inner"></div>
 
-        <div class="brand-pill pill-natura" onclick="selectBrandNav('Natura')" title="Filtrar Natura">
+        <div class="brand-pill pill-natura" onclick="selectBrandNav('Natura', '')" title="Filtrar Natura">
           <img src="assets/Natura.png" onerror="this.onerror=null; this.src='assets/Natura.jpg';" alt="Natura" />
         </div>
 
-        <div class="brand-pill pill-avon" onclick="selectBrandNav('Avon')" title="Filtrar Avon">
+        <div class="brand-pill pill-avon" onclick="selectBrandNav('Avon', '')" title="Filtrar Avon">
           <img src="assets/Avon.png" onerror="this.onerror=null; this.src='assets/Avon.jpg';" alt="Avon" />
         </div>
 
-        <div class="brand-pill pill-boticario" onclick="selectBrandNav('O Boticário')" title="Filtrar O Boticário">
-          <img src="assets/Boticario.png" onerror="this.onerror=null; this.src='assets/Boticário.jpg';" alt="O Boticário" />
+        <div class="brand-pill pill-boticario" onclick="selectBrandNav('O Boticário', '')" title="Filtrar O Boticário" style="background: #1b5e43;">
+          <img
+            src="assets/Boticario.png"
+            onerror="if(!this.dataset.t){this.dataset.t=1;this.src='assets/Boticario.jpg';}else if(this.dataset.t==1){this.dataset.t=2;this.src='assets/Boticario.jpeg';}else if(this.dataset.t==2){this.dataset.t=3;this.src='assets/Boticario.webp';}else{this.style.display='none';this.nextElementSibling.style.display='flex';}"
+            alt="O Boticário"
+          />
+          <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:#ffffff; text-align:center; padding:6px;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M10 2h4v3h-4V2zm-1 4h6l2 4v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10l2-4z"/></svg>
+            <span style="font-size:11px; font-weight:700; letter-spacing:0.3px; margin-top:4px;">oBoticário</span>
+          </div>
         </div>
 
-        <div class="brand-pill pill-eudora" onclick="selectBrandNav('Eudora')" title="Filtrar Eudora">
+        <div class="brand-pill pill-eudora" onclick="selectBrandNav('Eudora', '')" title="Filtrar Eudora">
           <img src="assets/Eudora.png" onerror="this.onerror=null; this.src='assets/Eudora.jpg';" alt="Eudora" />
         </div>
       </div>
@@ -263,7 +464,7 @@
     <section id="catalogo">
       <div class="section-header">
         <h2 id="sectionTitle">Produtos em Destaque</h2>
-        <span id="clearBrandBtn" class="active-filter-badge" onclick="selectBrandNav('')">Limpar filtro &times;</span>
+        <span id="clearBrandBtn" class="active-filter-badge" onclick="selectBrandNav('', '')">Limpar filtro &times;</span>
       </div>
       <div class="grid" id="productsGrid"></div>
     </section>
@@ -281,10 +482,16 @@
   <div class="product-modal-overlay" id="authModal" onclick="if (event.target === this) closeAuthModal()">
     <div class="auth-modal-card">
       <button class="product-modal-close" onclick="closeAuthModal()">&times;</button>
-      <h2>Cadastro de Cliente</h2>
-      <p>Preencha os seus dados abaixo para se identificar e liberar a finalização de pedidos na sacola.</p>
+      <h2>Identificação do Cliente</h2>
+      <p>Informe seu e-mail para entrar rapidamente ou preencha seus dados uma única vez para liberar a finalização de pedidos.</p>
 
       <form onsubmit="saveCustomerProfile(event)">
+        <label class="field-label" for="regEmail">E-mail *</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="email" id="regEmail" class="customer-input" style="margin-bottom: 0;" placeholder="Ex: maria@email.com" required />
+          <button type="button" class="quick-login-btn" onclick="loginByEmail()">Já tenho cadastro</button>
+        </div>
+
         <label class="field-label" for="regFullName">Nome e Sobrenome *</label>
         <input type="text" id="regFullName" class="customer-input" placeholder="Ex: Maria Silva" required />
 
@@ -353,6 +560,7 @@
         <span class="locked-badge" id="customerStatusBadge">Não logado</span>
       </div>
 
+      <input type="email" id="customerEmail" class="customer-input" placeholder="Faça login para preencher o e-mail" readonly />
       <input type="text" id="customerName" class="customer-input" placeholder="Faça login para preencher o nome" readonly />
       <input type="text" id="customerPhone" class="customer-input" placeholder="Faça login para preencher o telefone" readonly />
       <input type="text" id="customerCep" class="customer-input" placeholder="CEP" readonly />
@@ -375,19 +583,60 @@
 
   <script>
     const CUSTOMER_STORAGE_KEY = 'kezam_logged_customer';
+    const CUSTOMER_PROFILES_DB_KEY = 'kezam_customers_profiles';
     let allProducts = [];
     let cart = [];
     let selectedBrand = '';
+    let selectedSubcategory = '';
     let loggedCustomer = null;
+
+    function getSavedProfilesMap() {
+      try {
+        return JSON.parse(localStorage.getItem(CUSTOMER_PROFILES_DB_KEY) || '{}');
+      } catch {
+        return {};
+      }
+    }
 
     function initCustomerSession() {
       try {
         const saved = localStorage.getItem(CUSTOMER_STORAGE_KEY);
-        if (saved) loggedCustomer = JSON.parse(saved);
+        if (saved) {
+          loggedCustomer = JSON.parse(saved);
+        } else {
+          // Se houver apenas um cadastro salvo no dispositivo, restaura automaticamente
+          const profiles = Object.values(getSavedProfilesMap());
+          if (profiles.length === 1) {
+            loggedCustomer = profiles[0];
+            localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(loggedCustomer));
+          }
+        }
       } catch (e) {
         loggedCustomer = null;
       }
       syncCustomerUI();
+    }
+
+    function loginByEmail() {
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        alert('Digite um e-mail válido no campo acima para localizar seu cadastro.');
+        document.getElementById('regEmail').focus();
+        return;
+      }
+
+      const profiles = getSavedProfilesMap();
+      const found = profiles[email];
+      if (!found) {
+        alert('E-mail ainda não cadastrado neste dispositivo. Preencha os campos abaixo uma única vez para salvar!');
+        document.getElementById('regFullName').focus();
+        return;
+      }
+
+      loggedCustomer = found;
+      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(loggedCustomer));
+      syncCustomerUI();
+      closeAuthModal();
     }
 
     async function handleCepInput(input) {
@@ -431,6 +680,7 @@
     function syncCustomerUI() {
       const authBtn = document.getElementById('headerAuthBtn');
       const authText = document.getElementById('headerAuthText');
+      const emailInput = document.getElementById('customerEmail');
       const nameInput = document.getElementById('customerName');
       const phoneInput = document.getElementById('customerPhone');
       const cepInput = document.getElementById('customerCep');
@@ -445,6 +695,7 @@
         authBtn.classList.add('logged');
         authText.textContent = `Olá, ${firstName}`;
 
+        emailInput.value = loggedCustomer.email || '';
         nameInput.value = loggedCustomer.fullName;
         phoneInput.value = loggedCustomer.phone;
         cepInput.value = `CEP: ${loggedCustomer.cep || ''}`;
@@ -461,6 +712,7 @@
         authBtn.classList.remove('logged');
         authText.textContent = 'Cadastrar / Entrar';
 
+        emailInput.value = '';
         nameInput.value = '';
         phoneInput.value = '';
         cepInput.value = '';
@@ -478,6 +730,7 @@
 
     function openAuthModal() {
       if (loggedCustomer) {
+        document.getElementById('regEmail').value = loggedCustomer.email || '';
         document.getElementById('regFullName').value = loggedCustomer.fullName || '';
         document.getElementById('regPhone').value = loggedCustomer.phone || '';
         document.getElementById('regCep').value = loggedCustomer.cep || '';
@@ -494,6 +747,7 @@
 
     function saveCustomerProfile(event) {
       event.preventDefault();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
       const fullName = document.getElementById('regFullName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const cep = document.getElementById('regCep').value.trim();
@@ -501,26 +755,24 @@
       const address = document.getElementById('regAddress').value.trim();
       const complement = document.getElementById('regComplement').value.trim();
 
-      if (!fullName || !phone || !cep || !number || !address) {
-        alert('Preencha Nome e Sobrenome, Telefone, CEP, Número e Endereço.');
+      if (!email || !fullName || !phone || !cep || !number || !address) {
+        alert('Preencha E-mail, Nome e Sobrenome, Telefone, CEP, Número e Endereço.');
         return;
       }
 
-      loggedCustomer = { fullName, phone, cep, number, address, complement };
-   localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(loggedCustomer));
-   syncCustomerUI();
-   closeAuthModal();
- }
+      loggedCustomer = { email, fullName, phone, cep, number, address, complement };
+      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(loggedCustomer));
 
- function logoutCustomer() {
-   if (!confirm('Deseja sair da sua conta? Para fechar um pedido será necessário cadastrar ou entrar novamente.')) return;
-   loggedCustomer = null;
-   localStorage.removeItem(CUSTOMER_STORAGE_KEY);
-   syncCustomerUI();
- }
+      const profiles = getSavedProfilesMap();
+      profiles[email] = loggedCustomer;
+      localStorage.setItem(CUSTOMER_PROFILES_DB_KEY, JSON.stringify(profiles));
+
+      syncCustomerUI();
+      closeAuthModal();
+    }
 
     function logoutCustomer() {
-      if (!confirm('Deseja sair da sua conta? Para fechar um pedido será necessário cadastrar ou entrar novamente.')) return;
+      if (!confirm('Deseja sair da sua conta? Você poderá entrar novamente depois apenas informando seu e-mail.')) return;
       loggedCustomer = null;
       localStorage.removeItem(CUSTOMER_STORAGE_KEY);
       syncCustomerUI();
@@ -540,8 +792,37 @@
       return 'Outras';
     }
 
-    function selectBrandNav(brand) {
+    function matchesSubcategory(product, sub) {
+      if (!sub) return true;
+      const text = `${product.product_name || ''} ${product.description || ''} ${product.tbl_categories?.category_name || ''}`
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+
+      const rules = {
+        Perfume: ['perfume', 'colonia', 'deo parfum', 'eau de', 'essencial', 'kaiak', 'malbec', 'lily', 'kriska', 'luna', 'coffee', 'egeo', 'far away', 'pur blanca', 'club 6'],
+        Cabelo: ['cabelo', 'shampoo', 'condicionador', 'mascara capilar', 'creme para pentear', 'oleo capilar', 'siage', 'lumina', 'match'],
+        Maquiagem: ['maquiagem', 'batom', 'base', 'rimel', 'mascara de cilios', 'blush', 'po compacto', 'corretivo', 'iluminador', 'lapis', 'delineador', 'sombra', 'gloss'],
+        Hidratante: ['hidratante', 'locao', 'creme corporal', 'creme para as maos', 'creme para maos', 'polpa', 'tododia', 'ekos', 'nativa spa', 'cuide-se bem', 'instance'],
+        Limpeza: ['limpeza', 'sabonete', 'esfoliante', 'gel de limpeza', 'agua micelar', 'demaquilante', 'tonico', 'antisseptico'],
+        Catálogo: ['catalogo', 'revista', 'guia'],
+        Amostra: ['amostra', 'flaconete', 'demonstrador'],
+        Brinde: ['brinde', 'necessaire', 'bolsa', 'sacola', 'kit presente'],
+      };
+
+      if (sub === 'Outras Marcas') {
+        const isMaterial = ['catalogo', 'revista', 'amostra', 'flaconete', 'brinde', 'sacola'].some((k) => text.includes(k));
+        return !isMaterial;
+      }
+
+      const keywords = rules[sub] || [sub.toLowerCase()];
+      return keywords.some((kw) => text.includes(kw));
+    }
+
+    function selectBrandNav(brand, subcategory = '') {
       selectedBrand = brand;
+      selectedSubcategory = subcategory;
+
       document.querySelectorAll('.nav-menu a').forEach(a => {
         a.classList.toggle('active', (a.dataset.brand || '') === brand);
       });
@@ -549,7 +830,7 @@
       const titleEl = document.getElementById('sectionTitle');
       const clearBtn = document.getElementById('clearBrandBtn');
       if (brand) {
-        titleEl.textContent = `Coleção ${brand}`;
+        titleEl.textContent = subcategory ? `Coleção ${brand} — ${subcategory}` : `Coleção ${brand}`;
         clearBtn.style.display = 'inline-block';
       } else {
         titleEl.textContent = 'Produtos em Destaque';
@@ -646,7 +927,7 @@
 
       document.getElementById('modalProductBrand').textContent = brand;
       document.getElementById('modalProductName').textContent = product.product_name;
-      document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku} • Estoque: ${stock} unidade(s)`;
+      document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku} | Estoque: ${stock} unidade(s)`;
       document.getElementById('modalProductSpecs').innerHTML = `
         <strong>Características &amp; Ficha Técnica</strong><br/><br/>
         <strong>Marca:</strong> ${brand}<br/>
@@ -678,8 +959,21 @@
       const term = document.getElementById('searchInput').value.toLowerCase();
       const filtered = allProducts.filter(p => {
         const matchesText = p.product_name.toLowerCase().includes(term) || String(p.sku).includes(term);
-        const matchesBrand = !selectedBrand || (getProductBrand(p).toLowerCase() === selectedBrand.toLowerCase());
-        return matchesText && matchesBrand;
+
+        let matchesBrand = true;
+        if (selectedBrand) {
+          if (selectedBrand === 'Diversos') {
+            const detectedBrand = getProductBrand(p);
+            const normName = (p.product_name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            const isPromoItem = ['catalogo', 'revista', 'amostra', 'flaconete', 'brinde', 'sacola'].some((k) => normName.includes(k));
+            matchesBrand = detectedBrand === 'Outras' || isPromoItem;
+          } else {
+            matchesBrand = getProductBrand(p).toLowerCase() === selectedBrand.toLowerCase();
+          }
+        }
+
+        const matchesSub = matchesSubcategory(p, selectedSubcategory);
+        return matchesText && matchesBrand && matchesSub;
       });
       renderProducts(filtered);
     }
@@ -768,6 +1062,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            customerEmail: loggedCustomer.email || '',
             customerName: loggedCustomer.fullName,
             customerPhone: loggedCustomer.phone,
             customerAddress: fullDeliveryAddress,

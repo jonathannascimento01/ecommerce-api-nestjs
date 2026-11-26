@@ -14,7 +14,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
-  await app.listen(4000);
-  console.log('API rodando em http://127.0.0.1:4000');
+  await app.listen(4000, '0.0.0.0');
+  console.log('API rodando em http://192.168.56.1:4000 (e acessível na rede local)');
 }
 bootstrap();

@@ -150,6 +150,9 @@ model tbl_product_images {
 }
 
 model tbl_products {
+  cost_price      Decimal?  @default(0.00) @db.Decimal(10, 2)
+  batch_number    String?   @db.VarChar(80)
+  expiration_date DateTime? @db.Date
   product_id          BigInt                @id @default(autoincrement())
   brand_id            BigInt
   category_id         BigInt

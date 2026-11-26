@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kezam Store - Painel Administrativo</title>
+  <title>EFK Perfumaria e Cosmético — Painel de Gestão</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c3b2e' stroke='%23d4af37' stroke-width='4'/%3E%3Ctext x='32' y='40' text-anchor='middle' fill='%23f6e29c' font-family='Georgia,serif' font-weight='bold' font-size='22'%3EEFK%3C/text%3E%3C/svg%3E" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background: #f1f5f9; color: #1e293b; }
@@ -33,9 +34,14 @@
     .brand-btn { padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 20px; background: #f8fafc; color: #475569; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .brand-btn:hover { background: #e2e8f0; }
     .brand-btn.active { background: #4f46e5; color: white; border-color: #4f46e5; }
+    .sub-tab-btn { padding: 8px 16px; border-radius: 999px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .sub-tab-btn.active-ativos { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+    .sub-tab-btn.active-historico { background: #1d4ed8; color: #ffffff; border-color: #1d4ed8; }
+    .sub-tab-btn.active-cancelados { background: #dc2626; color: #ffffff; border-color: #dc2626; }
     .search-box { display: flex; align-items: center; gap: 10px; }
-    .search-input { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; width: 250px; }
+    .search-input { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; width: 260px; }
     .count-label { font-size: 13px; color: #64748b; font-weight: 600; }
+    .cancel-reason-box { margin-top: 10px; font-size: 13px; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle; }
     th { background: #f8fafc; font-weight: bold; color: #475569; }
@@ -50,10 +56,49 @@
 </head>
 <body>
   <header>
-    <h1>Painel Administrativo - Kezam Store</h1>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <!-- Brasão Quadrado Arredondado EFK -->
+      <div style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; border: 2px solid #d4af37; background: radial-gradient(circle at 30% 30%, #134e3e, #072920); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+        <img 
+          src="assets/logo-efk.jpg" 
+          onerror="this.style.display='none'; document.getElementById('adminEfkSvg').style.display='block';" 
+          alt="EFK Perfumaria e Cosmético" 
+          style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+        />
+        <svg id="adminEfkSvg" viewBox="0 0 120 120" style="display: none; width: 54px; height: 54px;">
+          <defs>
+            <linearGradient id="adminGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f6e29c" />
+              <stop offset="50%" stop-color="#d4af37" />
+              <stop offset="100%" stop-color="#e5a98c" />
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="56" r="46" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1.8" stroke-dasharray="3 2" />
+          <circle cx="60" cy="56" r="41" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1" />
+          <text x="60" y="64" text-anchor="middle" fill="url(#adminGoldGrad)" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="27" letter-spacing="1">EFK</text>
+          <text x="60" y="79" text-anchor="middle" fill="#f3d999" font-family="Arial, sans-serif" font-weight="600" font-size="6.2" letter-spacing="1.2">PERFUMARIA</text>
+          <text x="60" y="87" text-anchor="middle" fill="#e5a98c" font-family="Arial, sans-serif" font-weight="600" font-size="5.8" letter-spacing="1">&amp; COSMÉTICO</text>
+        </svg>
+      </div>
+
+      <!-- Título e Subtítulo da Marca -->
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px;">
+            EFK Perfumaria e Cosmético
+          </h1>
+          <span style="background: #0c3b2e; color: #f6e29c; border: 1px solid #d4af37; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 999px; letter-spacing: 0.5px;">
+            GESTÃO
+          </span>
+        </div>
+        <p style="margin: 2px 0 0; font-size: 12.5px; color: #cbd5e1;">
+          Erika Fernanda Kezam • Controle de Estoque, Preços e Pedidos
+        </p>
+      </div>
+    </div>
+
     <div class="nav-links">
-      <a href="loja.html" target="_blank">Abrir Vitrine</a>
-      <a href="index.html" target="_blank">Importar Planilha</a>
+      <a href="loja.html" target="_blank">Ver Vitrine</a>
     </div>
   </header>
 
@@ -65,6 +110,24 @@
 
     <!-- Aba Pedidos -->
     <div id="ordersSection" class="section active">
+      <div class="filter-bar">
+        <div class="brand-filters">
+          <button type="button" id="tabOrdersActive" class="sub-tab-btn active-ativos" onclick="setOrdersView('ATIVOS')">
+            Pedidos Ativos (<span id="countAtivos">0</span>)
+          </button>
+          <button type="button" id="tabOrdersHistory" class="sub-tab-btn" onclick="setOrdersView('HISTORICO')">
+            Histórico / Entregues (<span id="countHistorico">0</span>)
+          </button>
+          <button type="button" id="tabOrdersCancelled" class="sub-tab-btn" onclick="setOrdersView('CANCELADOS')">
+            Cancelados (<span id="countCancelados">0</span>)
+          </button>
+        </div>
+        <div class="search-box">
+          <input type="text" id="searchOrderCustomer" class="search-input" placeholder="Filtrar por cliente, WhatsApp ou #pedido..." oninput="renderOrders()" />
+          <span id="ordersCountLabel" class="count-label"></span>
+        </div>
+      </div>
+
       <div id="ordersList">A carregar pedidos...</div>
     </div>
 
@@ -101,16 +164,121 @@
     </div>
   </div>
 
+  <!-- Modal de Justificativa de Cancelamento -->
+  <div id="cancelReasonModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);">
+      <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin-bottom: 6px;">Motivo do Cancelamento</h3>
+      <p id="cancelOrderLabel" style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Informe a observação obrigatória para cancelar este pedido e estornar os itens ao estoque.</p>
+
+      <textarea
+        id="cancelReasonInput"
+        rows="4"
+        placeholder="Ex: Cliente desistiu da compra / Endereço fora da área de entrega / Produto indisponível..."
+        style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13.5px; resize: vertical; outline: none; margin-bottom: 16px;"
+      ></textarea>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" onclick="closeCancelModal()" style="padding: 10px 18px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; font-weight: 600; cursor: pointer;">Voltar</button>
+        <button type="button" id="confirmCancelBtn" onclick="confirmOrderCancellation()" style="padding: 10px 18px; border-radius: 10px; border: none; background: #dc2626; color: #ffffff; font-weight: 700; cursor: pointer;">Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = 'http://127.0.0.1:4000/products';
+    let allOrders = [];
     let allProducts = [];
     let selectedBrand = 'TODAS';
+    let ordersViewMode = 'ATIVOS';
+    let pendingCancelOrderId = null;
 
     function switchTab(tab, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(tab === 'orders' ? 'ordersSection' : 'stockSection').classList.add('active');
+    }
+
+    function setOrdersView(mode) {
+      ordersViewMode = mode;
+      const activeBtn = document.getElementById('tabOrdersActive');
+      const historyBtn = document.getElementById('tabOrdersHistory');
+      const cancelBtn = document.getElementById('tabOrdersCancelled');
+
+      activeBtn.className = 'sub-tab-btn';
+      historyBtn.className = 'sub-tab-btn';
+      cancelBtn.className = 'sub-tab-btn';
+
+      if (mode === 'ATIVOS') activeBtn.classList.add('active-ativos');
+      else if (mode === 'HISTORICO') historyBtn.classList.add('active-historico');
+      else cancelBtn.classList.add('active-cancelados');
+
+      renderOrders();
+    }
+
+    function handleOrderStatusChange(orderId, newStatus) {
+      if (newStatus === 'CANCELADO') {
+        pendingCancelOrderId = orderId;
+        const orderObj = allOrders.find(o => o.order_id === orderId);
+        const orderRef = orderObj ? `#${orderObj.order_number}` : `#${orderId}`;
+        document.getElementById('cancelReasonInput').value = '';
+        document.getElementById('cancelOrderLabel').textContent = `Pedido ${orderRef} — Informe a observação obrigatória para cancelar e estornar os itens ao estoque:`;
+        document.getElementById('cancelReasonModal').style.display = 'flex';
+        document.getElementById('cancelReasonInput').focus();
+        return;
+      }
+
+      submitOrderStatusUpdate(orderId, newStatus, null);
+    }
+
+    function closeCancelModal() {
+      pendingCancelOrderId = null;
+      document.getElementById('cancelReasonModal').style.display = 'none';
+      renderOrders();
+    }
+
+    async function confirmOrderCancellation() {
+      const reason = document.getElementById('cancelReasonInput').value.trim();
+
+      if (!reason) {
+        alert('Por favor, informe a justificativa do cancelamento.');
+        document.getElementById('cancelReasonInput').focus();
+        return;
+      }
+
+      const orderId = pendingCancelOrderId;
+      if (!orderId) return;
+
+      document.getElementById('cancelReasonModal').style.display = 'none';
+      pendingCancelOrderId = null;
+
+      await submitOrderStatusUpdate(orderId, 'CANCELADO', reason);
+    }
+
+    async function submitOrderStatusUpdate(orderId, status, cancellationReason) {
+      try {
+        const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status,
+            reason: cancellationReason,
+            cancellationReason,
+            cancelReason: cancellationReason,
+            notes: cancellationReason,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || data.success === false) {
+          alert(data.message || 'Erro ao atualizar status do pedido.');
+        }
+        await loadOrders();
+        if (status === 'CANCELADO') {
+          await loadStock();
+        }
+      } catch (err) {
+        alert('Falha de comunicação com o servidor ao atualizar o pedido.');
+      }
     }
 
     function normalizeText(text) {
@@ -151,76 +319,96 @@
     async function loadOrders() {
       try {
         const res = await fetch(`${API_URL}/orders`);
-        const orders = await res.json();
-        const container = document.getElementById('ordersList');
-
-        if (!orders || orders.length === 0) {
-          container.innerHTML = '<div class="card">Nenhum pedido registado até o momento.</div>';
-          return;
-        }
-
-        container.innerHTML = orders.map(o => {
-          const dateStr = new Date(o.created_at).toLocaleString('pt-BR');
-          const totalStr = Number(o.total_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-          const customerName = o.tbl_customers?.full_name || 'Cliente';
-          const customerPhone = o.tbl_customers?.phone || '-';
-
-          const itemsHtml = (o.tbl_order_items || []).map(item => `
-            <li>${item.quantity}x <strong>${item.tbl_products?.product_name || 'Produto'}</strong> (SKU: ${item.tbl_products?.sku || '-'}) — ${Number(item.subtotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</li>
-          `).join('');
-
-          return `
-            <div class="card">
-              <div class="order-header">
-                <div>
-                  <span class="order-id">#${o.order_number}</span>
-                  <span style="margin-left: 12px; font-size: 13px; color: #64748b;">${dateStr}</span>
-                </div>
-                <span class="status-badge status-${o.status}">${o.status}</span>
-              </div>
-              <div style="font-size: 14px; margin-bottom: 6px;">
-                <strong>Cliente:</strong> ${customerName} | <strong>WhatsApp:</strong> ${customerPhone}
-              </div>
-              <div style="font-size: 13px; color: #334155; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
-                <strong>📍 Entrega:</strong> ${o.customer_address || 'Endereço não informado'}
-              </div>
-              <ul class="order-items">${itemsHtml}</ul>
-              <div class="order-footer">
-                <div style="font-size: 16px; font-weight: bold; color: #16a34a;">Total: ${totalStr}</div>
-                <div>
-                  <label style="font-size: 13px; margin-right: 6px;">Alterar Status:</label>
-                  <select class="status-select" onchange="changeStatus(${o.order_id}, this.value)">
-                    <option value="PENDENTE" ${o.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
-                    <option value="PAGO" ${o.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
-                    <option value="ENTREGUE" ${o.status === 'ENTREGUE' ? 'selected' : ''}>ENTREGUE</option>
-                    <option value="CANCELADO" ${o.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
+        allOrders = await res.json();
+        renderOrders();
       } catch (err) {
         document.getElementById('ordersList').innerHTML = '<div class="card">Erro ao carregar pedidos do servidor.</div>';
       }
     }
 
-    async function changeStatus(orderId, newStatus) {
-      try {
-        const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          loadOrders();
-        } else {
-          alert(data.message);
-        }
-      } catch (err) {
-        alert('Erro ao atualizar status.');
+    function renderOrders() {
+      const container = document.getElementById('ordersList');
+      const query = normalizeText(document.getElementById('searchOrderCustomer')?.value || '');
+
+      const ativos = allOrders.filter(o => o.status === 'PENDENTE' || o.status === 'PAGO');
+      const historico = allOrders.filter(o => o.status === 'ENTREGUE');
+      const cancelados = allOrders.filter(o => o.status === 'CANCELADO');
+
+      document.getElementById('countAtivos').textContent = ativos.length;
+      document.getElementById('countHistorico').textContent = historico.length;
+      document.getElementById('countCancelados').textContent = cancelados.length;
+
+      let baseList = ativos;
+      if (ordersViewMode === 'HISTORICO') baseList = historico;
+      else if (ordersViewMode === 'CANCELADOS') baseList = cancelados;
+
+      const filteredOrders = baseList.filter(o => {
+        if (!query) return true;
+        const cName = o.tbl_customers?.full_name || '';
+        const cPhone = o.tbl_customers?.phone || '';
+        const cEmail = o.customer_email || o.tbl_customers?.email || '';
+        return normalizeText(`${o.order_number} ${cName} ${cPhone} ${cEmail}`).includes(query);
+      });
+
+      document.getElementById('ordersCountLabel').textContent = `${filteredOrders.length} pedido(s)`;
+
+      if (filteredOrders.length === 0) {
+        const emptyMsgs = {
+          ATIVOS: 'Nenhum pedido ativo no momento.',
+          HISTORICO: 'Nenhum pedido entregue no histórico.',
+          CANCELADOS: 'Nenhum pedido cancelado registado.',
+        };
+        container.innerHTML = `<div class="card" style="color: #64748b;">${emptyMsgs[ordersViewMode]}</div>`;
+        return;
       }
+
+      container.innerHTML = filteredOrders.map(o => {
+        const dateStr = new Date(o.created_at).toLocaleString('pt-BR');
+        const totalStr = Number(o.total_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const customerName = o.tbl_customers?.full_name || 'Cliente';
+        const customerPhone = o.tbl_customers?.phone || '-';
+        const customerEmail = o.customer_email || o.tbl_customers?.email || '';
+
+        const itemsHtml = (o.tbl_order_items || []).map(item => `
+          <li>${item.quantity}x <strong>${item.tbl_products?.product_name || 'Produto'}</strong> (SKU: ${item.tbl_products?.sku || '-'}) — ${Number(item.subtotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</li>
+        `).join('');
+
+        const reasonHtml = o.status === 'CANCELADO'
+          ? `<div class="cancel-reason-box"><strong>Motivo do Cancelamento:</strong> ${o.cancellation_reason || 'Não informado'}</div>`
+          : '';
+
+        return `
+          <div class="card">
+            <div class="order-header">
+              <div>
+                <span class="order-id">#${o.order_number}</span>
+                <span style="margin-left: 12px; font-size: 13px; color: #64748b;">${dateStr}</span>
+              </div>
+              <span class="status-badge status-${o.status}">${o.status}</span>
+            </div>
+            <div style="font-size: 14px; margin-bottom: 6px;">
+              <strong>Cliente:</strong> ${customerName} | <strong>WhatsApp:</strong> ${customerPhone}${customerEmail ? ` | <strong>E-mail:</strong> ${customerEmail}` : ''}
+            </div>
+            <div style="font-size: 13px; color: #334155; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+              <strong>📍 Entrega:</strong> ${o.customer_address || 'Endereço não informado'}
+            </div>
+            <ul class="order-items">${itemsHtml}</ul>
+            ${reasonHtml}
+            <div class="order-footer">
+              <div style="font-size: 16px; font-weight: bold; color: #16a34a;">Total: ${totalStr}</div>
+              <div>
+                <label style="font-size: 13px; margin-right: 6px;">Alterar Status:</label>
+                <select class="status-select" onchange="handleOrderStatusChange(${o.order_id}, this.value)">
+                  <option value="PENDENTE" ${o.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                  <option value="PAGO" ${o.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
+                  <option value="ENTREGUE" ${o.status === 'ENTREGUE' ? 'selected' : ''}>ENTREGUE</option>
+                  <option value="CANCELADO" ${o.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function loadStock() {
@@ -230,6 +418,32 @@
         renderStockTable();
       } catch (err) {
         console.error(err);
+      }
+    }
+
+    async function adjustStock(productId) {
+      const input = document.getElementById(`qty_${productId}`);
+      const delta = Number(input?.value);
+      if (!delta || Number.isNaN(delta)) {
+        alert('Informe uma quantidade válida para ajustar (ex: 10 ou -2).');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/${productId}/stock`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: delta, delta }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success !== false) {
+          input.value = '';
+          loadStock();
+        } else {
+          alert(data.message || 'Erro ao atualizar estoque.');
+        }
+      } catch (err) {
+        alert('Erro de conexão ao ajustar estoque.');
       }
     }
 
@@ -264,12 +478,12 @@
         return `
           <tr>
             <td>
-  <div class="photo-cell">
-    ${imgSrc ? `<img src="${imgSrc}" class="thumb-img" alt="Foto" />` : ''}
-    <input type="file" id="file_${p.product_id}" accept="image/*" style="display: none;" onchange="selectFileAndSave(${p.product_id}, this)" />
-    <button class="btn-photo" onclick="document.getElementById('file_${p.product_id}').click()">Escolher Arquivo</button>
-  </div>
-</td>
+              <div class="photo-cell">
+                ${imgSrc ? `<img src="${imgSrc}" class="thumb-img" alt="Foto" />` : ''}
+                <input type="file" id="file_${p.product_id}" accept="image/*" style="display: none;" onchange="selectFileAndSave(${p.product_id}, this)" />
+                <button class="btn-photo" onclick="document.getElementById('file_${p.product_id}').click()">Escolher Arquivo</button>
+              </div>
+            </td>
             <td>${p.sku}</td>
             <td><strong>${p.product_name}</strong></td>
             <td>${priceStr}</td>
@@ -284,50 +498,48 @@
     }
 
     async function selectFileAndSave(productId, input) {
-  const file = input.files[0];
-  if (!file) return;
+      const file = input.files[0];
+      if (!file) return;
 
-  // Se o arquivo vier de dentro da pasta assets, tenta preservar o caminho relativo; caso contrário, usa assets/<nome>
-  let relativePath = `assets/${file.name}`;
-  if (file.webkitRelativePath) {
-    relativePath = file.webkitRelativePath;
-  }
+      let relativePath = `assets/${file.name}`;
+      if (file.webkitRelativePath) {
+        relativePath = file.webkitRelativePath;
+      }
 
-  // Pergunta rápida apenas para confirmar ou ajustar a subpasta dentro de assets/ (ex: assets/Itens Natura/Batom/...)
-  const confirmedPath = prompt(
-    'Confirme o caminho da imagem na pasta assets:',
-    relativePath
-  );
-  if (!confirmedPath || !confirmedPath.trim()) {
-    input.value = '';
-    return;
-  }
+      const confirmedPath = prompt(
+        'Confirme o caminho da imagem na pasta assets:',
+        relativePath
+      );
+      if (!confirmedPath || !confirmedPath.trim()) {
+        input.value = '';
+        return;
+      }
 
-  const cleanPath = confirmedPath.trim().replace(/\\/g, '/');
+      const cleanPath = confirmedPath.trim().replace(/\\/g, '/');
 
-  try {
-    const res = await fetch(`${API_URL}/${productId}/image`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        imageUrl: cleanPath,
-        image: cleanPath,
-        image_url: cleanPath,
-      }),
-    });
-    const data = await res.json();
+      try {
+        const res = await fetch(`${API_URL}/${productId}/image`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageUrl: cleanPath,
+            image: cleanPath,
+            image_url: cleanPath,
+          }),
+        });
+        const data = await res.json();
 
-    if (res.ok && (data.success || data.image_url || data.product)) {
-      loadStock();
-    } else {
-      alert(data.message || 'Erro ao salvar caminho da imagem.');
+        if (res.ok && (data.success || data.image_url || data.product)) {
+          loadStock();
+        } else {
+          alert(data.message || 'Erro ao salvar caminho da imagem.');
+        }
+      } catch (err) {
+        alert('Erro de conexão ao salvar a imagem.');
+      } finally {
+        input.value = '';
+      }
     }
-  } catch (err) {
-    alert('Erro de conexão ao salvar a imagem.');
-  } finally {
-    input.value = '';
-  }
-}
 
     loadOrders();
     loadStock();
