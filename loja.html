@@ -582,7 +582,7 @@
   </div>
 
   <script>
-    const API_BASE_URL =
+    const API_BASE_URL = window.location.protocol === 'file:' ? 'http://127.0.0.1:4000' : window.location.origin;
   window.location.protocol === 'file:'
     ? `${API_BASE_URL}/products`
     : window.location.origin;
