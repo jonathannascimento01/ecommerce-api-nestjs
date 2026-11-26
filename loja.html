@@ -583,9 +583,8 @@
 
   <script>
     const API_BASE_URL = window.location.protocol === 'file:' ? 'http://127.0.0.1:4000' : window.location.origin;
-  window.location.protocol === 'file:'
-    ? `${API_BASE_URL}/products`
-    : window.location.origin;
+    const PRODUCTS_API_URL = `${API_BASE_URL}/products`;
+    const API_URL = PRODUCTS_API_URL;
     const CUSTOMER_STORAGE_KEY = 'kezam_logged_customer';
     const CUSTOMER_PROFILES_DB_KEY = 'kezam_customers_profiles';
     let allProducts = [];
