@@ -582,6 +582,10 @@
   </div>
 
   <script>
+    const API_BASE_URL =
+  window.location.protocol === 'file:'
+    ? `${API_BASE_URL}/products`
+    : window.location.origin;
     const CUSTOMER_STORAGE_KEY = 'kezam_logged_customer';
     const CUSTOMER_PROFILES_DB_KEY = 'kezam_customers_profiles';
     let allProducts = [];
@@ -850,7 +854,7 @@
 
     async function loadProducts() {
       try {
-        const res = await fetch('http://127.0.0.1:4000/products');
+        const res = await fetch(`${API_BASE_URL}/products`);
         allProducts = await res.json();
         filterProducts();
       } catch (err) {
@@ -1058,7 +1062,7 @@
       const fullDeliveryAddress = `${loggedCustomer.address}${loggedCustomer.number ? `, Nº ${loggedCustomer.number}` : ''}${loggedCustomer.complement ? ` - ${loggedCustomer.complement}` : ''}${loggedCustomer.cep ? ` (CEP: ${loggedCustomer.cep})` : ''}`;
 
       try {
-        const res = await fetch('http://127.0.0.1:4000/products/checkout', {
+        const res = await fetch(`${API_BASE_URL}/products/checkout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

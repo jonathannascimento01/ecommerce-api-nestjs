@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-// Ensina o JSON.stringify a converter campos BigInt do PostgreSQL automaticamente
+// Permite que o NestJS serialize campos BigInt do Prisma/PostgreSQL em JSON
 (BigInt.prototype as any).toJSON = function () {
   return Number(this);
 };
@@ -11,10 +11,11 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
-  await app.listen(4000, '0.0.0.0');
-  console.log('API rodando em http://192.168.56.1:4000 (e acessível na rede local)');
+  const port = process.env.PORT || 4000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Servidor EFK rodando na porta ${port}`);
 }
 bootstrap();
