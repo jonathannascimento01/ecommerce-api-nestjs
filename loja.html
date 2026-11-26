@@ -25,7 +25,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
     html { scroll-behavior: smooth; }
 
-    /* Degradê vivo alternando entre tons naturais (pêssego, rosa pétala, sálvia) e futuristas (lavanda, azul holográfico) */
+    /* Degradê vivo alternando entre tons naturais e futuristas */
     @keyframes auroraBotanicaFuturista {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -49,7 +49,6 @@
       position: relative;
     }
 
-    /* Brilhos orgânicos e prismáticos difusos */
     body::before {
       content: '';
       position: fixed;
@@ -230,51 +229,165 @@
     /* Container Principal */
     .main-container { max-width: 1260px; margin: 0 auto; padding: 34px 24px 64px; }
 
-    /* ZONA 1: Esteira contínua de Kits / Destaques */
-    .featured-kits-section {
-      background: var(--glass-surface);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--glass-border);
-      border-radius: 26px;
-      padding: 24px 26px;
-      margin-bottom: 16px;
-      box-shadow: 0 12px 36px rgba(44, 44, 44, 0.08);
+    /* =====================================================================
+       ZONA 1 SAZONAL: ESPECIAL DE NATAL COM CORES NATALINAS E PISCA-PISCA
+       ===================================================================== */
+    @keyframes piscaNatalA {
+      0%, 100% { opacity: 1; transform: scale(1.18); filter: brightness(1.35); }
+      50% { opacity: 0.22; transform: scale(0.88); filter: brightness(0.6); }
     }
-    .featured-kits-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    @keyframes piscaNatalB {
+      0%, 100% { opacity: 0.22; transform: scale(0.88); filter: brightness(0.6); }
+      50% { opacity: 1; transform: scale(1.18); filter: brightness(1.35); }
+    }
+    @keyframes brilhoEstrelaNatal {
+      0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); text-shadow: 0 0 14px #ffd700, 0 0 26px #ff4d4d; }
+      50% { opacity: 0.35; transform: scale(0.9) rotate(-8deg); text-shadow: none; }
+    }
+
+    .featured-kits-section {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0b3b2c 0%, #144d38 42%, #7a1220 78%, #9e1b2c 100%);
+      border: 2px solid #ffd700;
+      border-radius: 26px;
+      padding: 34px 26px 24px;
+      margin-bottom: 18px;
+      box-shadow:
+        0 14px 38px rgba(122, 18, 32, 0.32),
+        0 0 26px rgba(255, 215, 0, 0.28),
+        inset 0 0 32px rgba(255, 215, 0, 0.14);
+    }
+
+    /* Cordão de Pisca-Pisca no topo do bloco */
+    .xmas-lights-garland {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 24px;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 0 14px;
+      pointer-events: none;
+      z-index: 3;
+      border-top: 2px solid rgba(255, 215, 0, 0.55);
+    }
+    .xmas-bulb {
+      width: 11px;
+      height: 15px;
+      border-radius: 50% 50% 50% 50% / 35% 35% 65% 65%;
+      margin-top: 3px;
+      position: relative;
+    }
+    .xmas-bulb::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 3px;
+      width: 5px;
+      height: 4px;
+      background: #d4af37;
+      border-radius: 2px;
+    }
+    .xmas-bulb.gold {
+      background: #ffd700;
+      box-shadow: 0 0 12px #ffd700, 0 0 22px #ffae00;
+      animation: piscaNatalA 1.4s infinite ease-in-out;
+    }
+    .xmas-bulb.red {
+      background: #ff3b5c;
+      box-shadow: 0 0 12px #ff3b5c, 0 0 22px #ff002b;
+      animation: piscaNatalB 1.4s infinite ease-in-out;
+    }
+    .xmas-bulb.green {
+      background: #2ee59d;
+      box-shadow: 0 0 12px #2ee59d, 0 0 22px #00c875;
+      animation: piscaNatalA 1.8s infinite ease-in-out;
+    }
+    .xmas-bulb.warm {
+      background: #fff7cc;
+      box-shadow: 0 0 12px #fff7cc, 0 0 22px #ffd700;
+      animation: piscaNatalB 1.8s infinite ease-in-out;
+    }
+
+    /* Enfeites e figuras natalinas piscando */
+    .xmas-ornament-icon {
+      display: inline-block;
+      font-size: 20px;
+      animation: brilhoEstrelaNatal 1.7s infinite ease-in-out;
+    }
+    .xmas-ornament-icon.alt {
+      animation-delay: 0.85s;
+    }
+
+    .featured-kits-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .xmas-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .featured-kits-header h2 {
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 800;
-      color: var(--charcoal);
+      color: #fff9e6;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
       letter-spacing: -0.2px;
     }
     .featured-kits-subtitle {
       font-size: 12.5px;
       font-weight: 700;
-      color: var(--rose-gold-dark);
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid rgba(183, 110, 121, 0.35);
-      padding: 4px 12px;
+      color: #0b3b2c;
+      background: linear-gradient(135deg, #ffe885, #ffd700);
+      border: 1px solid #ffffff;
+      padding: 5px 14px;
       border-radius: 999px;
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
     }
+
     .marquee-wrapper { overflow: hidden; width: 100%; padding: 6px 0 8px; position: relative; }
     .marquee-track { display: flex; gap: 20px; width: max-content; animation: esteiraDireitaEsquerda 32s linear infinite; }
     .marquee-wrapper:hover .marquee-track { animation-play-state: paused; }
-    .marquee-track .card { width: 245px; flex-shrink: 0; }
+    .marquee-track .card {
+      width: 245px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1.5px solid #ffd700;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    }
+    .marquee-track .card:hover {
+      border-color: #ff3b5c;
+      box-shadow: 0 12px 26px rgba(255, 215, 0, 0.35);
+    }
+    .marquee-track .card .brand-label {
+      color: #9e1b2c;
+    }
+    .marquee-track .card .add-circle-btn {
+      background: linear-gradient(135deg, #9e1b2c, #0b3b2c);
+      border: 1px solid #ffd700;
+    }
     @keyframes esteiraDireitaEsquerda {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
     .marquee-empty {
-      border: 1.5px dashed rgba(183, 110, 121, 0.45);
+      border: 1.5px dashed rgba(255, 215, 0, 0.72);
       border-radius: 18px;
       padding: 34px 20px;
       text-align: center;
-      color: var(--charcoal-muted);
-      background: rgba(255, 255, 255, 0.62);
+      color: #fff9e6;
+      background: rgba(255, 255, 255, 0.08);
       font-size: 14px;
     }
-    .marquee-empty strong { color: var(--rose-gold-dark); }
+    .marquee-empty strong { color: #ffd700; }
 
     /* ZONA 2: Bloco Central - 4 Colunas de Marcas */
     .brands-showcase {
@@ -451,7 +564,7 @@
       min-width: 245px;
     }
 
-    /* Cards de Produto Aura Floral */
+    /* Cards de Produto */
     .card {
       background: rgba(255, 255, 255, 0.90);
       backdrop-filter: blur(12px);
@@ -813,12 +926,39 @@
   </header>
 
   <main class="main-container">
-    <!-- ZONA 1: Produtos em Destaque / Esteira de Kits -->
+    <!-- ZONA 1 SAZONAL: Especial de Natal com Pisca-Pisca e Figuras -->
     <section class="featured-kits-section">
-      <div class="featured-kits-header">
-        <h2>Produtos em Destaque • Kits</h2>
-        <span class="featured-kits-subtitle">Kits especiais de diversas marcas</span>
+      <!-- Cordão de luzes pisca-pisca -->
+      <div class="xmas-lights-garland" aria-hidden="true">
+        <span class="xmas-bulb gold"></span>
+        <span class="xmas-bulb red"></span>
+        <span class="xmas-bulb green"></span>
+        <span class="xmas-bulb warm"></span>
+        <span class="xmas-bulb gold"></span>
+        <span class="xmas-bulb red"></span>
+        <span class="xmas-bulb green"></span>
+        <span class="xmas-bulb warm"></span>
+        <span class="xmas-bulb gold"></span>
+        <span class="xmas-bulb red"></span>
+        <span class="xmas-bulb green"></span>
+        <span class="xmas-bulb warm"></span>
+        <span class="xmas-bulb gold"></span>
+        <span class="xmas-bulb red"></span>
+        <span class="xmas-bulb green"></span>
+        <span class="xmas-bulb warm"></span>
+        <span class="xmas-bulb gold"></span>
+        <span class="xmas-bulb red"></span>
       </div>
+
+      <div class="featured-kits-header">
+        <div class="xmas-title-wrap">
+          <span class="xmas-ornament-icon" aria-hidden="true">🎄</span>
+          <h2>Especial de Natal • Kits &amp; Presentes</h2>
+          <span class="xmas-ornament-icon alt" aria-hidden="true">✨</span>
+        </div>
+        <span class="featured-kits-subtitle">🎁 Kits Natalinos de diversas marcas ❄️</span>
+      </div>
+
       <div id="kitsMarqueeContainer" class="marquee-wrapper"></div>
     </section>
 
@@ -992,7 +1132,7 @@
       const cleanName = rawName.replace(/^\d+\s*/, '');
       const catDb = normalizeText(product.tbl_categories?.category_name);
 
-      // 1. Maquiagem tem prioridade (garante que "Batom CC Hidratante" caia em Maquiagem)
+      // 1. Maquiagem tem prioridade
       const makeKeywords = ['batom', 'gloss', 'maquiagem', 'base', 'rimel', 'mascara de cilios', 'blush', 'po compacto', 'sombra', 'lapis', 'delineador', 'corretivo', 'iluminador'];
       if (makeKeywords.some(k => cleanName.includes(k)) || catDb === 'maquiagem') {
         return 'Maquiagem';
@@ -1125,7 +1265,7 @@
     function renderVitrineEstruturada() {
       const searchTerm = normalizeText(document.getElementById('searchInput')?.value || '');
 
-      // 1. Esteira de Kits (direita -> esquerda)
+      // 1. Esteira Sazonal de Natal (Kits)
       const kitsContainer = document.getElementById('kitsMarqueeContainer');
       const kits = allProducts.filter(p => {
         const text = normalizeText(`${p.product_name || ''} ${p.tbl_categories?.category_name || ''}`);
@@ -1135,7 +1275,7 @@
       if (kits.length === 0) {
         kitsContainer.innerHTML = `
           <div class="marquee-empty">
-            Espaço reservado para <strong>Kits de diversas marcas</strong> em destaque (esteira contínua da direita para a esquerda).
+            🎄 Vitrine Sazonal reservada para <strong>Kits &amp; Presentes de Natal</strong> em destaque! 🎁
           </div>`;
       } else {
         const loopItems = kits.length >= 4 ? [...kits, ...kits] : [...kits, ...kits, ...kits, ...kits];
