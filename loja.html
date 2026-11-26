@@ -228,7 +228,6 @@
 
     /* =====================================================================
        ZONA 1 SAZONAL: ESPECIAL DE NATAL COM CORES NATALINAS E PISCA-PISCA
-       (MANTIDA EXATAMENTE COMO APROVADA)
        ===================================================================== */
     @keyframes piscaNatalA {
       0%, 100% { opacity: 1; transform: scale(1.18); filter: brightness(1.35); }
@@ -923,7 +922,7 @@
   </header>
 
   <main class="main-container">
-    <!-- ZONA 1 SAZONAL: Especial de Natal com Pisca-Pisca e Figuras (INTOCADOS) -->
+    <!-- ZONA 1 SAZONAL: Especial de Natal com Pisca-Pisca e Figuras -->
     <section class="featured-kits-section">
       <div class="xmas-lights-garland" aria-hidden="true">
         <span class="xmas-bulb gold"></span>
@@ -1491,12 +1490,10 @@
       syncCustomerUI();
     }
 
-    // Localize no loja.html dentro de openProductModal(productId):
-// ANTES:
-document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku} | Estoque: ${stock} unidade(s)`;
-
-// DEPOIS (exibindo apenas o código):
-document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku}`;
+    /* Modal de Detalhes */
+    function openProductModal(productId) {
+      const product = allProducts.find(p => p.product_id === productId);
+      if (!product) return;
 
       const brand = getProductBrand(product);
       const stock = product.tbl_stock?.quantity ?? 0;
@@ -1514,7 +1511,7 @@ document.getElementById('modalProductSku').textContent = `Código SKU: ${product
 
       document.getElementById('modalProductBrand').textContent = brand;
       document.getElementById('modalProductName').textContent = product.product_name;
-      document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku} | Estoque: ${stock} unidade(s)`;
+      document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku}`;
       document.getElementById('modalProductSpecs').innerHTML = `
         <strong>Características &amp; Ficha Técnica</strong><br/><br/>
         <strong>Marca:</strong> ${brand}<br/>
@@ -1536,7 +1533,7 @@ document.getElementById('modalProductSku').textContent = `Código SKU: ${product
       }
 
       document.getElementById('productDetailModal').classList.add('open');
-    
+    }
 
     function closeProductModal() {
       document.getElementById('productDetailModal').classList.remove('open');
