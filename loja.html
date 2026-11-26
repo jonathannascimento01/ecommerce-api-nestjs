@@ -1491,10 +1491,12 @@
       syncCustomerUI();
     }
 
-    /* Modal de Detalhes */
-    function openProductModal(productId) {
-      const product = allProducts.find(p => p.product_id === productId);
-      if (!product) return;
+    // Localize no loja.html dentro de openProductModal(productId):
+// ANTES:
+document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku} | Estoque: ${stock} unidade(s)`;
+
+// DEPOIS (exibindo apenas o código):
+document.getElementById('modalProductSku').textContent = `Código SKU: ${product.sku}`;
 
       const brand = getProductBrand(product);
       const stock = product.tbl_stock?.quantity ?? 0;
@@ -1534,7 +1536,7 @@
       }
 
       document.getElementById('productDetailModal').classList.add('open');
-    }
+    
 
     function closeProductModal() {
       document.getElementById('productDetailModal').classList.remove('open');
