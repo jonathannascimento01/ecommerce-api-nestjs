@@ -242,7 +242,7 @@
       border: 2px solid #ffd700;
       border-radius: 26px;
       padding: 34px 26px 24px;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
       box-shadow:
         0 14px 38px rgba(122, 18, 32, 0.32),
         0 0 26px rgba(255, 215, 0, 0.28),
@@ -377,12 +377,90 @@
     }
     .marquee-empty strong { color: #ffd700; }
 
+    /* BANNER MONTE AQUI SEU KIT */
+    .custom-kit-banner {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 232, 214, 0.95) 50%, rgba(212, 241, 228, 0.95) 100%);
+      backdrop-filter: blur(16px);
+      border: 2px solid var(--natura-orange);
+      border-radius: 24px;
+      padding: 22px 28px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 12px 32px rgba(232, 93, 4, 0.14);
+      position: relative;
+      overflow: hidden;
+    }
+    .custom-kit-banner::after {
+      content: '🎀';
+      position: absolute;
+      right: 18%;
+      top: -10px;
+      font-size: 64px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    .custom-kit-banner-info {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex: 1;
+      min-width: 260px;
+    }
+    .custom-kit-icon-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--natura-orange), var(--boti-emerald));
+      color: #ffffff;
+      font-size: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(0, 122, 77, 0.24);
+    }
+    .custom-kit-banner-text h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--boti-forest);
+      margin-bottom: 4px;
+    }
+    .custom-kit-banner-text p {
+      font-size: 13.5px;
+      color: var(--muted-forest);
+      line-height: 1.45;
+    }
+    .custom-kit-cta-btn {
+      background: linear-gradient(135deg, var(--natura-orange) 0%, var(--boti-emerald) 100%);
+      color: #ffffff;
+      border: none;
+      padding: 14px 26px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 22px rgba(232, 93, 4, 0.26);
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .custom-kit-cta-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(0, 122, 77, 0.30);
+    }
+
     /* ZONA 2: Bloco Central - 4 Colunas de Marcas */
     .brands-showcase {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      margin: 28px 0 36px;
+      margin: 0 0 36px;
     }
     .brand-column {
       background: var(--glass-card);
@@ -628,8 +706,8 @@
     }
     .sold-out-tag { font-size: 11px; font-weight: 700; color: var(--muted-forest); background: rgba(19, 56, 44, 0.08); padding: 5px 10px; border-radius: 999px; }
 
-    /* Modais e Sacola */
-    .product-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(19, 56, 44, 0.45); backdrop-filter: blur(8px); z-index: 45; align-items: center; justify-content: center; padding: 20px; }
+    /* Modais */
+    .product-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(19, 56, 44, 0.48); backdrop-filter: blur(8px); z-index: 45; align-items: center; justify-content: center; padding: 20px; }
     .product-modal-overlay.open { display: flex; }
     .product-modal-card {
       background: rgba(255, 255, 255, 0.97);
@@ -676,7 +754,203 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 5;
     }
+
+    /* MODAL CONSTRUTOR DE KIT */
+    .kit-builder-card {
+      background: #ffffff;
+      border: 1px solid #ffffff;
+      border-radius: 26px;
+      max-width: 980px;
+      width: 100%;
+      max-height: 90vh;
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      overflow: hidden;
+      box-shadow: 0 26px 56px rgba(19, 56, 44, 0.28);
+      position: relative;
+      color: var(--boti-forest);
+    }
+    .kit-builder-left {
+      padding: 26px 26px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: linear-gradient(180deg, #fffdf9 0%, #f5fbf8 100%);
+    }
+    .kit-builder-left h2 {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--boti-forest);
+      margin-bottom: 2px;
+    }
+    .kit-step-box {
+      background: #ffffff;
+      border: 1px solid rgba(0, 122, 77, 0.18);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .kit-step-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--natura-orange);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kit-packaging-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .kit-pack-option {
+      border: 1.5px solid rgba(0, 122, 77, 0.22);
+      border-radius: 12px;
+      padding: 9px 11px;
+      cursor: pointer;
+      background: #ffffff;
+      text-align: left;
+      transition: all 0.18s;
+    }
+    .kit-pack-option:hover {
+      border-color: var(--natura-orange);
+    }
+    .kit-pack-option.selected {
+      border-color: var(--boti-emerald);
+      background: rgba(212, 241, 228, 0.45);
+      box-shadow: 0 4px 12px rgba(0, 122, 77, 0.12);
+    }
+    .kit-pack-name {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--boti-forest);
+      margin-bottom: 2px;
+    }
+    .kit-pack-price {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--natura-orange);
+    }
+    .kit-filter-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .kit-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 122, 77, 0.26);
+      background: #ffffff;
+      color: var(--boti-forest);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .kit-pill.active {
+      background: var(--boti-emerald);
+      color: #ffffff;
+      border-color: var(--boti-emerald);
+    }
+    .kit-products-list {
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+    .kit-prod-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid rgba(19, 56, 44, 0.10);
+      border-radius: 12px;
+      background: #ffffff;
+    }
+    .kit-prod-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      object-fit: contain;
+      border: 1px solid rgba(0, 122, 77, 0.14);
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+    .kit-prod-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .kit-prod-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--boti-forest);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .kit-prod-sub {
+      font-size: 11.5px;
+      color: var(--boti-emerald);
+      font-weight: 700;
+    }
+    .kit-add-item-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: none;
+      background: var(--boti-emerald);
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .kit-add-item-btn:hover {
+      background: var(--natura-orange);
+    }
+
+    .kit-builder-right {
+      background: linear-gradient(160deg, #ffe9d6 0%, #d4f1e4 100%);
+      border-left: 1.5px solid rgba(0, 122, 77, 0.18);
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+    .kit-summary-list {
+      flex: 1;
+      overflow-y: auto;
+      margin: 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kit-selected-item {
+      background: rgba(255, 255, 255, 0.90);
+      border-radius: 11px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .kit-total-box {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--boti-emerald);
+      margin-bottom: 10px;
+    }
+
     .product-modal-img-box { background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 28px; min-height: 280px; }
     .product-modal-img-box img { max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; }
     .product-modal-info { padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; }
@@ -840,9 +1114,11 @@
       .header-search { width: 160px; }
       .brands-showcase { grid-template-columns: repeat(2, 1fr); }
       .product-modal-card { grid-template-columns: 1fr; }
+      .kit-builder-card { grid-template-columns: 1fr; max-height: 92vh; overflow-y: auto; }
     }
     @media (max-width: 520px) {
       .brands-showcase { grid-template-columns: 1fr; }
+      .kit-packaging-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -983,6 +1259,20 @@
       <div id="kitsMarqueeContainer" class="marquee-wrapper"></div>
     </section>
 
+    <!-- BANNER INTERATIVO: MONTE AQUI SEU KIT PERSONALIZADO -->
+    <section class="custom-kit-banner">
+      <div class="custom-kit-banner-info">
+        <div class="custom-kit-icon-badge" aria-hidden="true">🎁</div>
+        <div class="custom-kit-banner-text">
+          <h2>Monte Aqui Seu Kit Personalizado</h2>
+          <p>Combine perfumes, hidratantes, maquiagem ou itens de cabelo de qualquer marca, escolha a sacola ou caixa premium e escreva sua mensagem para presente.</p>
+        </div>
+      </div>
+      <button type="button" class="custom-kit-cta-btn" onclick="openKitBuilder()">
+        <span>✨ Começar a Montar Meu Kit</span>
+      </button>
+    </section>
+
     <!-- ZONA 2: 4 Colunas Fixas das Marcas -->
     <section class="brands-showcase">
       <div class="brand-column" data-brand-card="Natura" onclick="selectBrandNav('Natura', '')">
@@ -1017,9 +1307,99 @@
     <span>&copy; 2026 EFK Perfumaria e Cosmético. Todos os direitos reservados.</span>
     <div class="footer-links">
       <a href="#categoriesBlocksContainer">Catálogo</a>
+      <a href="#" onclick="openKitBuilder(); return false;">Monte Seu Kit</a>
       <a href="#" onclick="toggleCart(); return false;">Minha Sacola</a>
     </div>
   </footer>
+
+  <!-- Modal Construtor: Monte Aqui Seu Kit -->
+  <div class="product-modal-overlay" id="kitBuilderModal" onclick="if (event.target === this) closeKitBuilder()">
+    <div class="kit-builder-card">
+      <button class="product-modal-close" onclick="closeKitBuilder()">&times;</button>
+
+      <!-- Coluna Esquerda: Seleção de Embalagem e Produtos -->
+      <div class="kit-builder-left">
+        <div>
+          <h2>🎁 Monte Aqui Seu Kit</h2>
+          <p style="font-size: 13px; color: var(--muted-forest);">Personalize cada detalhe do seu presente em 3 passos simples.</p>
+        </div>
+
+        <!-- Passo 1 -->
+        <div class="kit-step-box">
+          <div class="kit-step-title">Passo 1 • Escolha a Embalagem para Presente</div>
+          <div class="kit-packaging-grid" id="kitPackagingGrid">
+            <button type="button" class="kit-pack-option selected" data-pack="none" onclick="selectKitPackaging('none')">
+              <span class="kit-pack-name">Sem embalagem adicional</span>
+              <span class="kit-pack-price">R$ 0,00</span>
+            </button>
+            <button type="button" class="kit-pack-option" data-pack="sacola_p" onclick="selectKitPackaging('sacola_p')">
+              <span class="kit-pack-name">Sacola de Presente P com Laço (1 un.)</span>
+              <span class="kit-pack-price">R$ 6,90</span>
+            </button>
+            <button type="button" class="kit-pack-option" data-pack="sacola_m" onclick="selectKitPackaging('sacola_m')">
+              <span class="kit-pack-name">Sacola de Presente M com Laço (1 un.)</span>
+              <span class="kit-pack-price">R$ 9,90</span>
+            </button>
+            <button type="button" class="kit-pack-option" data-pack="sacola_g" onclick="selectKitPackaging('sacola_g')">
+              <span class="kit-pack-name">Sacola de Presente G com Laço</span>
+              <span class="kit-pack-price">R$ 12,90</span>
+            </button>
+            <button type="button" class="kit-pack-option" data-pack="caixa_premium" onclick="selectKitPackaging('caixa_premium')" style="grid-column: span 2;">
+              <span class="kit-pack-name">✨ Caixa Especial de Presente Premium</span>
+              <span class="kit-pack-price">R$ 13,90</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Passo 2 -->
+        <div class="kit-step-box">
+          <div class="kit-step-title">Passo 2 • Adicione os Produtos ao Kit</div>
+          <div class="kit-filter-pills" id="kitCategoryPills">
+            <button type="button" class="kit-pill active" onclick="setKitCategoryFilter('', this)">Todos</button>
+            <button type="button" class="kit-pill" onclick="setKitCategoryFilter('Perfume', this)">Perfumes</button>
+            <button type="button" class="kit-pill" onclick="setKitCategoryFilter('Hidratante', this)">Hidratantes</button>
+            <button type="button" class="kit-pill" onclick="setKitCategoryFilter('Cabelo', this)">Cabelo</button>
+            <button type="button" class="kit-pill" onclick="setKitCategoryFilter('Maquiagem', this)">Maquiagem</button>
+            <button type="button" class="kit-pill" onclick="setKitCategoryFilter('Limpeza', this)">Limpeza</button>
+          </div>
+          <input type="text" id="kitSearchInput" class="customer-input" placeholder="Buscar item para o kit..." oninput="renderKitCatalogList()" style="margin-bottom: 10px;" />
+          <div class="kit-products-list" id="kitCatalogList"></div>
+        </div>
+      </div>
+
+      <!-- Coluna Direita: Resumo do Kit e Cartão -->
+      <div class="kit-builder-right">
+        <div>
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--boti-forest);">Resumo do Seu Kit</h3>
+          <p style="font-size: 12px; color: var(--muted-forest);">Itens selecionados para compor o presente:</p>
+        </div>
+
+        <div class="kit-summary-list" id="kitSummaryList"></div>
+
+        <div>
+          <label class="field-label" for="kitGiftMessage" style="margin-bottom: 4px;">Passo 3 • Mensagem do Cartão (opcional)</label>
+          <input type="text" id="kitGiftMessage" class="customer-input" placeholder="Ex: Feliz Natal! Com carinho..." maxlength="120" />
+
+          <div class="kit-total-box">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-forest); margin-bottom: 4px;">
+              <span>Produtos (<span id="kitItemsCount">0</span>):</span>
+              <span id="kitProductsSubtotal">R$ 0,00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-forest); margin-bottom: 6px;">
+              <span>Embalagem:</span>
+              <span id="kitPackSubtotal">R$ 0,00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 17px; font-weight: 800; color: var(--boti-forest); border-top: 1px dashed rgba(0, 122, 77, 0.25); padding-top: 6px;">
+              <span>Total do Kit:</span>
+              <span id="kitGrandTotal">R$ 0,00</span>
+            </div>
+          </div>
+
+          <button type="button" class="checkout-btn" onclick="addCustomKitToCart()">Adicionar Kit Completo à Sacola</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal de Cadastro / Login do Cliente -->
   <div class="product-modal-overlay" id="authModal" onclick="if (event.target === this) closeAuthModal()">
@@ -1147,6 +1527,20 @@
     let selectedBrand = '';
     let selectedSubcategory = '';
     let loggedCustomer = null;
+    let customKitCardNote = '';
+
+    /* Estado do Construtor de Kit */
+    let kitDraftItems = [];
+    let kitSelectedPack = 'none';
+    let kitCategoryFilter = '';
+
+    const PACK_PRICES = {
+      none: { price: 0, label: 'Sem embalagem adicional' },
+      sacola_p: { price: 6.90, label: 'Sacola de Presente P com Laço (1 unidade)' },
+      sacola_m: { price: 9.90, label: 'Sacola de Presente M com Laço (1 unidade)' },
+      sacola_g: { price: 12.90, label: 'Sacola de Presente G com Laço' },
+      caixa_premium: { price: 13.90, label: 'Caixa Especial de Presente Premium' },
+    };
 
     const CATEGORIAS_BLOCOS = [
       { id: 'cat-perfume', titulo: 'Perfume' },
@@ -1389,6 +1783,184 @@
       }
     }
 
+    /* CONSTRUTOR DE KIT PERSONALIZADO */
+    function openKitBuilder() {
+      kitDraftItems = [];
+      kitSelectedPack = document.getElementById('giftOptionSelect')?.value || 'none';
+      kitCategoryFilter = '';
+      document.getElementById('kitSearchInput').value = '';
+      document.getElementById('kitGiftMessage').value = customKitCardNote || '';
+
+      document.querySelectorAll('#kitCategoryPills .kit-pill').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === 0);
+      });
+
+      selectKitPackaging(kitSelectedPack);
+      renderKitCatalogList();
+      renderKitSummary();
+      document.getElementById('kitBuilderModal').classList.add('open');
+    }
+
+    function closeKitBuilder() {
+      document.getElementById('kitBuilderModal').classList.remove('open');
+    }
+
+    function selectKitPackaging(packKey) {
+      kitSelectedPack = packKey;
+      document.querySelectorAll('#kitPackagingGrid .kit-pack-option').forEach(btn => {
+        btn.classList.toggle('selected', btn.getAttribute('data-pack') === packKey);
+      });
+      renderKitSummary();
+    }
+
+    function setKitCategoryFilter(cat, btnEl) {
+      kitCategoryFilter = cat;
+      document.querySelectorAll('#kitCategoryPills .kit-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderKitCatalogList();
+    }
+
+    function renderKitCatalogList() {
+      const listEl = document.getElementById('kitCatalogList');
+      const term = normalizeText(document.getElementById('kitSearchInput')?.value || '');
+
+      const available = allProducts.filter(p => {
+        const stock = p.tbl_stock?.quantity ?? 0;
+        if (stock <= 0) return false;
+        if (kitCategoryFilter && detectProductCategory(p) !== kitCategoryFilter) return false;
+        if (term && !normalizeText(p.product_name).includes(term) && !String(p.sku).includes(term)) return false;
+        return true;
+      });
+
+      if (available.length === 0) {
+        listEl.innerHTML = '<p style="font-size: 12.5px; color: var(--muted-forest); text-align: center; padding: 18px;">Nenhum produto em estoque encontrado para esse filtro.</p>';
+        return;
+      }
+
+      listEl.innerHTML = available.map(p => {
+        const imgUrl = p.tbl_product_images?.[0]?.image_url || p.image_url || p.image;
+        const brand = getProductBrand(p);
+        const priceFmt = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const thumbHTML = imgUrl
+          ? `<img src="${imgUrl}" alt="${p.product_name}" class="kit-prod-thumb" />`
+          : `<div class="kit-prod-thumb" style="display:flex;align-items:center;justify-content:center;font-size:16px;">🧴</div>`;
+
+        return `
+          <div class="kit-prod-row">
+            ${thumbHTML}
+            <div class="kit-prod-meta">
+              <div class="kit-prod-title" title="${p.product_name}">${p.product_name}</div>
+              <div class="kit-prod-sub">${brand} • ${priceFmt}</div>
+            </div>
+            <button type="button" class="kit-add-item-btn" onclick="addProductToKitDraft(${p.product_id})">+ Incluir</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addProductToKitDraft(productId) {
+      const product = allProducts.find(p => p.product_id === productId);
+      if (!product) return;
+      const maxStock = product.tbl_stock?.quantity ?? 0;
+      const alreadyInCart = cart.find(c => c.product_id === productId)?.quantity || 0;
+      const existing = kitDraftItems.find(item => item.product_id === productId);
+      const currentDraftQty = existing ? existing.quantity : 0;
+
+      if (alreadyInCart + currentDraftQty + 1 > maxStock) {
+        alert('Quantidade máxima disponível atingida para este produto.');
+        return;
+      }
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        kitDraftItems.push({
+          product_id: product.product_id,
+          sku: product.sku,
+          product_name: product.product_name,
+          price: Number(product.price),
+          quantity: 1,
+        });
+      }
+      renderKitSummary();
+    }
+
+    function removeProductFromKitDraft(productId) {
+      const idx = kitDraftItems.findIndex(item => item.product_id === productId);
+      if (idx === -1) return;
+      if (kitDraftItems[idx].quantity > 1) {
+        kitDraftItems[idx].quantity -= 1;
+      } else {
+        kitDraftItems.splice(idx, 1);
+      }
+      renderKitSummary();
+    }
+
+    function renderKitSummary() {
+      const listEl = document.getElementById('kitSummaryList');
+      const packInfo = PACK_PRICES[kitSelectedPack] || PACK_PRICES.none;
+      const productsTotal = kitDraftItems.reduce((acc, i) => acc + i.price * i.quantity, 0);
+      const totalCount = kitDraftItems.reduce((acc, i) => acc + i.quantity, 0);
+      const grandTotal = productsTotal + packInfo.price;
+
+      document.getElementById('kitItemsCount').textContent = totalCount;
+      document.getElementById('kitProductsSubtotal').textContent = productsTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('kitPackSubtotal').textContent = packInfo.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('kitGrandTotal').textContent = grandTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      const packRow = packInfo.price > 0
+        ? `<div class="kit-selected-item" style="border: 1px solid var(--natura-orange);">
+             <span>🎁 <strong>${packInfo.label}</strong></span>
+             <strong style="color: var(--natura-orange);">${packInfo.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+           </div>`
+        : '';
+
+      if (kitDraftItems.length === 0) {
+        listEl.innerHTML = packRow + '<p style="font-size: 12.5px; color: var(--muted-forest); text-align: center; margin-top: 24px;">Clique em <strong>+ Incluir</strong> nos produtos ao lado para montar seu kit.</p>';
+        return;
+      }
+
+      const itemsRows = kitDraftItems.map(item => `
+        <div class="kit-selected-item">
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.quantity}x ${item.product_name}</div>
+            <div style="color: var(--boti-emerald); font-weight:700;">${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+          </div>
+          <button type="button" class="qty-btn" onclick="removeProductFromKitDraft(${item.product_id})" title="Remover 1 unidade">-</button>
+        </div>
+      `).join('');
+
+      listEl.innerHTML = packRow + itemsRows;
+    }
+
+    function addCustomKitToCart() {
+      if (kitDraftItems.length === 0) {
+        alert('Adicione pelo menos um produto para montar o seu kit!');
+        return;
+      }
+
+      kitDraftItems.forEach(kitItem => {
+        const existing = cart.find(c => c.product_id === kitItem.product_id);
+        if (existing) {
+          existing.quantity += kitItem.quantity;
+        } else {
+          cart.push({ ...kitItem });
+        }
+      });
+
+      const giftSelect = document.getElementById('giftOptionSelect');
+      if (giftSelect && kitSelectedPack !== 'none') {
+        giftSelect.value = kitSelectedPack;
+      }
+
+      customKitCardNote = document.getElementById('kitGiftMessage').value.trim();
+
+      updateCartUI();
+      closeKitBuilder();
+      toggleCart();
+    }
+
+    /* SESSÃO E PERFIL DO CLIENTE */
     function getSavedProfilesMap() {
       try { return JSON.parse(localStorage.getItem(CUSTOMER_PROFILES_DB_KEY) || '{}'); } catch { return {}; }
     }
@@ -1653,7 +2225,13 @@
         `
         : '';
 
-      container.innerHTML = itemsHTML + giftSummaryHTML;
+      const cardNoteHTML = customKitCardNote
+        ? `<div style="background: rgba(212, 241, 228, 0.45); padding: 8px 10px; border-radius: 8px; margin-top: 6px; font-size: 12px; color: var(--boti-forest);">
+             💌 <strong>Cartão do Kit:</strong> "${customKitCardNote}"
+           </div>`
+        : '';
+
+      container.innerHTML = itemsHTML + giftSummaryHTML + cardNoteHTML;
     }
 
     async function checkout() {
@@ -1676,8 +2254,9 @@
       const giftNote = gift.price > 0
         ? ` | 🎁 Embalagem: ${gift.label} (+${gift.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`
         : '';
+      const cardNote = customKitCardNote ? ` | 💌 Cartão: "${customKitCardNote}"` : '';
 
-      const fullDeliveryAddress = `${loggedCustomer.address}${loggedCustomer.number ? `, Nº ${loggedCustomer.number}` : ''}${loggedCustomer.complement ? ` - ${loggedCustomer.complement}` : ''}${loggedCustomer.cep ? ` (CEP: ${loggedCustomer.cep})` : ''}${giftNote}`;
+      const fullDeliveryAddress = `${loggedCustomer.address}${loggedCustomer.number ? `, Nº ${loggedCustomer.number}` : ''}${loggedCustomer.complement ? ` - ${loggedCustomer.complement}` : ''}${loggedCustomer.cep ? ` (CEP: ${loggedCustomer.cep})` : ''}${giftNote}${cardNote}`;
 
       try {
         const res = await fetch(`${API_BASE_URL}/products/checkout`, {
@@ -1689,12 +2268,14 @@
             customerPhone: loggedCustomer.phone,
             customerAddress: fullDeliveryAddress,
             giftOption: gift.price > 0 ? { label: gift.label, price: gift.price } : null,
+            cardMessage: customKitCardNote || null,
             items: cart,
           }),
         });
         const result = await res.json();
         if (result.success) {
           cart = [];
+          customKitCardNote = '';
           document.getElementById('giftOptionSelect').value = 'none';
           updateCartUI();
           toggleCart();
