@@ -185,6 +185,24 @@
   </div>
 
   <script>
+    async function loadOrders() {
+  try {
+    const res = await fetch(`${API_URL}/orders`);
+    if (!res.ok) throw new Error('Falha ao buscar pedidos');
+    const data = await res.json();
+    allOrders = Array.isArray(data) ? data : (data.orders || data.data || []);
+    renderOrders();
+  } catch (err) {
+    document.getElementById('ordersList').innerHTML = '<div class="card">Erro ao carregar pedidos do servidor.</div>';
+  }
+}
+
+// Atualiza os pedidos automaticamente a cada 15 segundos
+setInterval(() => {
+  if (!document.hidden) {
+    loadOrders();
+  }
+}, 15000);
     const API_BASE_URL =
       window.location.protocol === 'file:'
         ? 'http://127.0.0.1:4000'
