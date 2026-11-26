@@ -7,7 +7,6 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2313382C' stroke='%23E85D04' stroke-width='4'/%3E%3Ctext x='32' y='40' text-anchor='middle' fill='%23FFE2CC' font-family='Georgia,serif' font-weight='bold' font-size='22'%3EEFK%3C/text%3E%3C/svg%3E" />
   <style>
     :root {
-      /* Paleta Mesclada Natura (Laranja Solar / Terracota / Pêssego) + O Boticário (Verde Esmeralda / Menta / Floresta) */
       --natura-orange: #E85D04;
       --natura-orange-light: #FF7B29;
       --natura-peach: #FFE2CC;
@@ -24,7 +23,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
     html { scroll-behavior: smooth; }
 
-    /* Degradê vivo mesclando os tons solares da Natura com os verdes botânicos d'O Boticário */
     @keyframes auroraNaturaBoticario {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -59,7 +57,6 @@
       z-index: -1;
     }
 
-    /* Cabeçalho Glassmorphism Natura + O Boticário */
     header {
       background: rgba(255, 255, 255, 0.78);
       backdrop-filter: blur(18px);
@@ -94,7 +91,6 @@
       font-weight: 800;
     }
 
-    /* Menu Cascata (Dropdown) */
     .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
     .nav-dropdown > a { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
     .nav-dropdown::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
@@ -223,12 +219,9 @@
       justify-content: center;
     }
 
-    /* Container Principal */
     .main-container { max-width: 1260px; margin: 0 auto; padding: 34px 24px 64px; }
 
-    /* =====================================================================
-       ZONA 1 SAZONAL: ESPECIAL DE NATAL COM CORES NATALINAS E PISCA-PISCA
-       ===================================================================== */
+    /* ZONA 1 SAZONAL: ESPECIAL DE NATAL COM CORES NATALINAS E PISCA-PISCA */
     @keyframes piscaNatalA {
       0%, 100% { opacity: 1; transform: scale(1.18); filter: brightness(1.35); }
       50% { opacity: 0.22; transform: scale(0.88); filter: brightness(0.6); }
@@ -500,7 +493,6 @@
       border-radius: 999px;
     }
 
-    /* Controles de Setas (Esquerda e Direita) */
     .carousel-controls {
       display: flex;
       align-items: center;
@@ -534,7 +526,6 @@
       transform: scale(0.96);
     }
 
-    /* Trilha Horizontal Deslizante de cada Categoria */
     .category-carousel-track {
       display: flex;
       gap: 20px;
@@ -560,7 +551,6 @@
       min-width: 245px;
     }
 
-    /* Cards de Produto Natura + O Boticário */
     .card {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px);
@@ -1127,13 +1117,11 @@
       const cleanName = rawName.replace(/^\d+\s*/, '');
       const catDb = normalizeText(product.tbl_categories?.category_name);
 
-      // 1. Maquiagem tem prioridade
       const makeKeywords = ['batom', 'gloss', 'maquiagem', 'base', 'rimel', 'mascara de cilios', 'blush', 'po compacto', 'sombra', 'lapis', 'delineador', 'corretivo', 'iluminador'];
       if (makeKeywords.some(k => cleanName.includes(k)) || catDb === 'maquiagem') {
         return 'Maquiagem';
       }
 
-      // 2. Hidratante: apenas quando "hidratante" vier na frente do nome
       if (
         cleanName.startsWith('hidratante') ||
         cleanName.startsWith('locao hidratante') ||
@@ -1144,19 +1132,16 @@
         return 'Hidratante';
       }
 
-      // 3. Cabelo
       const hairKeywords = ['cabelo', 'shampoo', 'condicionador', 'mascara capilar', 'capilar', 'creme para pentear', 'reparador', 'leave-in', 'tonico capilar'];
       if (hairKeywords.some(k => cleanName.includes(k)) || catDb === 'cabelo') {
         return 'Cabelo';
       }
 
-      // 4. Limpeza
       const cleanKeywords = ['limpeza', 'sabonete', 'esfoliante', 'gel de limpeza', 'demaquilante', 'agua micelar', 'espuma de limpeza'];
       if (cleanKeywords.some(k => cleanName.includes(k)) || catDb === 'limpeza') {
         return 'Limpeza';
       }
 
-      // 5. Perfume
       const perfumeKeywords = ['perfume', 'colonia', 'parfum', 'deo parfum', 'desodorante colonia', 'edp', 'edt', 'essencial', 'audaz', 'aura', 'kaiak', 'malbec', 'lily', 'floratta', 'egeo'];
       if (perfumeKeywords.some(k => cleanName.includes(k)) || catDb === 'perfume' || catDb === 'perfumaria') {
         return 'Perfume';
@@ -1260,7 +1245,6 @@
     function renderVitrineEstruturada() {
       const searchTerm = normalizeText(document.getElementById('searchInput')?.value || '');
 
-      // 1. Esteira Sazonal de Natal (Kits)
       const kitsContainer = document.getElementById('kitsMarqueeContainer');
       const kits = allProducts.filter(p => {
         const text = normalizeText(`${p.product_name || ''} ${p.tbl_categories?.category_name || ''}`);
@@ -1277,7 +1261,6 @@
         kitsContainer.innerHTML = `<div class="marquee-track">${loopItems.map(p => buildProductCardHTML(p)).join('')}</div>`;
       }
 
-      // 2. Barra de status de filtro
       const statusBar = document.getElementById('filterStatusBar');
       const statusText = document.getElementById('filterStatusText');
       if (selectedBrand || selectedSubcategory || searchTerm) {
@@ -1291,7 +1274,6 @@
         statusBar.classList.remove('visible');
       }
 
-      // 3. Filtragem base para os blocos de categorias
       const baseFiltrada = allProducts.filter(p => {
         const matchesText = !searchTerm || normalizeText(p.product_name).includes(searchTerm) || String(p.sku).includes(searchTerm);
 
@@ -1311,7 +1293,6 @@
         return matchesText && matchesBrand && matchesSub;
       });
 
-      // 4. Renderização dos 5 blocos com setas esquerda/direita
       const container = document.getElementById('categoriesBlocksContainer');
       const blocosToRender = selectedSubcategory
         ? CATEGORIAS_BLOCOS.filter(b => normalizeText(b.titulo) === normalizeText(selectedSubcategory))
@@ -1360,7 +1341,6 @@
       }
     }
 
-    /* Autenticação e Cadastro Rápido do Cliente */
     function getSavedProfilesMap() {
       try { return JSON.parse(localStorage.getItem(CUSTOMER_PROFILES_DB_KEY) || '{}'); } catch { return {}; }
     }
