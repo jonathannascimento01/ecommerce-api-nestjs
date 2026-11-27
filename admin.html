@@ -303,21 +303,23 @@
       else if (mode === 'HISTORICO') historyBtn.classList.add('active-historico');
       else cancelBtn.classList.add('active-cancelados');
 
-      renderOrders();
+      function getConfirmedWhatsAppOrders() {
+      try {
+        return JSON.parse(localStorage.getItem('efk_wa_confirmed_orders') || '[]');
+      } catch {
+        return [];
+      }
     }
 
-    function handleOrderStatusChange(orderId, newStatus) {
-      if (newStatus === 'CANCELADO') {
-        pendingCancelOrderId = orderId;
-        const orderObj = allOrders.find(o => o.order_id === orderId);
-        const orderRef = orderObj ? `#${orderObj.order_number}` : `#${orderId}`;
-        document.getElementById('cancelReasonInput').value = '';
-        document.getElementById('cancelOrderLabel').textContent = `Pedido ${orderRef} — Informe a observação obrigatória para cancelar e estornar os itens ao estoque:`;
-        document.getElementById('cancelReasonModal').style.display = 'flex';
-        document.getElementById('cancelReasonInput').focus();
-        return;
+    function markWhatsAppConfirmed(orderId, waLink) {
+      const confirmed = getConfirmedWhatsAppOrders();
+      if (!confirmed.includes(orderId)) {
+        confirmed.push(orderId);
+        localStorage.setItem('efk_wa_confirmed_orders', JSON.stringify(confirmed));
       }
-
+      window.open(waLink, '_blank', 'noopener,noreferrer');
+      renderOrders();
+    }
       submitOrderStatusUpdate(orderId, newStatus, null);
     }
 
@@ -483,10 +485,25 @@
           ? `<div class="cancel-reason-box"><strong>Motivo do Cancelamento:</strong> ${o.cancellation_reason || 'Não informado'}</div>`
           : '';
 
-        const whatsappBtnHtml = waLink && o.status !== 'CANCELADO'
-          ? `<a href="${waLink}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #16a34a; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700;">Confirmar no WhatsApp</a>`
-          : '';
+        const confirmedWaList = getConfirmedWhatsAppOrders();
+        const isWaConfirmed = confirmedWaList.includes(o.order_id);
 
+        let whatsappBtnHtml = '';
+        if (waLink && o.status === 'PENDENTE') {
+          if (isWaConfirmed) {
+            whatsappBtnHtml = `
+              <span style="display: inline-flex; align-items: center; gap: 6px; background: #e2e8f0; color: #64748b; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: not-allowed; user-select: none;">
+                ✓ Confirmado no WhatsApp
+              </span>
+            `;
+          } else {
+            whatsappBtnHtml = `
+              <button type="button" onclick="markWhatsAppConfirmed(${o.order_id}, '${waLink}')" style="display: inline-flex; align-items: center; gap: 6px; background: #16a34a; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                Confirmar no WhatsApp
+              </button>
+            `;
+          }
+        }
         return `
           <div class="card">
             <div class="order-header">
