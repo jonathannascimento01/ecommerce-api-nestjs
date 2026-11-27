@@ -8,7 +8,50 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background: #f1f5f9; color: #1e293b; }
-    header { background: #1e1b4b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      box-sizing: border-box;
+      background: #1e1b4b;
+      color: #ffffff;
+      padding: 14px 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-inner {
+      max-width: 1260px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #c7d2fe;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
     header h1 { font-size: 22px; }
     .nav-links a { color: #c7d2fe; text-decoration: none; margin-left: 20px; font-weight: 600; font-size: 14px; }
     .nav-links a:hover { color: white; }
@@ -133,10 +176,16 @@
 
     <div class="nav-links">
       <header>
-      <h1>Painel Administrativo — EFK Perfumaria e Cosmético</h1>
-      <div class="nav-links">
-        <a href="index.html">Início (Index)</a>
-        <a href="loja.html">Ver Vitrine Online →</a>
+      <div class="header-inner">
+        <!-- Mantenha aqui exatamente o bloco atual da logo e título (EFK Perfumaria e Cosmético) -->
+        <div class="brand-area" style="display: flex; align-items: center; gap: 14px;">
+          <!-- Sua imagem da logo e os textos do título/subtítulo permanecem aqui -->
+        </div>
+
+        <div class="nav-links">
+          <a href="index.html" target="_blank" rel="noopener noreferrer">Início (Index) ↗</a>
+          <a href="loja.html" target="_blank" rel="noopener noreferrer">Ver Vitrine Online ↗</a>
+        </div>
       </div>
     </header>
 
