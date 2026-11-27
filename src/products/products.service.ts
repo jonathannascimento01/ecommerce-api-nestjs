@@ -243,14 +243,35 @@ export class ProductsService {
         ? `\n*Endereço*: ${customerAddress.trim()}`
         : '';
 
+      const formattedTotal = `R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`;
+
+      const cleanCustomerDigits = (customerPhone || '').replace(/\D/g, '');
+      const waCustomerPhone = cleanCustomerDigits
+        ? cleanCustomerDigits.startsWith('55')
+          ? cleanCustomerDigits
+          : `55${cleanCustomerDigits}`
+        : '';
+
+      const confirmClientMsg =
+        `Olá, *${customerName}*! Tudo bem? ✨\n\n` +
+        `Passando para confirmar que recebemos o seu pedido *#${result.orderNumber}* na *EFK Perfumaria e Cosmético* no valor de *${formattedTotal}*.\n\n` +
+        `Já estamos separando os seus produtos com todo carinho e em breve te avisamos por aqui sobre a entrega! 🛍️💐`;
+
+      const replyClientLink = waCustomerPhone
+        ? `\n\n📲 *Confirmar recebimento ao cliente:*\nhttps://wa.me/${waCustomerPhone}?text=${encodeURIComponent(
+            confirmClientMsg,
+          )}`
+        : '';
+
       const whatsappMsg =
-        `*NOVO PEDIDO - KEZAM STORE*\n\n` +
+        `*NOVO PEDIDO - EFK PERFUMARIA E COSMÉTICO*\n\n` +
         `*Pedido*: #${result.orderNumber}\n` +
         `*Cliente*: ${customerName}\n` +
         `*Contato*: ${customerPhone}` +
         `${addressText}${cardText}\n\n` +
         `*Itens do Pedido*:\n${itemsText}${giftText}\n\n` +
-        `*Total*: R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`;
+        `*Total*: ${formattedTotal}` +
+        `${replyClientLink}`;
 
       const targets = [
         { phone: '558197422792', apiKey: '7693734' },
@@ -270,9 +291,7 @@ export class ProductsService {
 
       return {
         success: true,
-        message: `Pedido #${result.orderNumber} realizado com sucesso! Total: R$ ${result.totalAmount
-          .toFixed(2)
-          .replace('.', ',')}`,
+        message: `Pedido #${result.orderNumber} realizado com sucesso! Total: ${formattedTotal}`,
         orderNumber: result.orderNumber,
       };
     } catch (error: any) {

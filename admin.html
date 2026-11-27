@@ -467,12 +467,24 @@
         const customerPhone = o.tbl_customers?.phone || '-';
         const customerEmail = o.customer_email || o.tbl_customers?.email || '';
 
+        const cleanPhoneDigits = customerPhone.replace(/\D/g, '');
+        const waPhone = cleanPhoneDigits
+          ? (cleanPhoneDigits.startsWith('55') ? cleanPhoneDigits : `55${cleanPhoneDigits}`)
+          : '';
+
+        const confirmMsg = `Olá, *${customerName}*! Tudo bem? ✨\n\nPassando para confirmar que recebemos o seu pedido *#${o.order_number}* na *EFK Perfumaria e Cosmético* no valor de *${totalStr}*.\n\nJá estamos separando os seus produtos com todo carinho e em breve te avisamos por aqui sobre a entrega! 🛍️💐`;
+        const waLink = waPhone ? `https://wa.me/${waPhone}?text=${encodeURIComponent(confirmMsg)}` : '';
+
         const itemsHtml = (o.tbl_order_items || []).map(item => `
           <li>${item.quantity}x <strong>${item.tbl_products?.product_name || 'Produto'}</strong> (SKU: ${item.tbl_products?.sku || '-'}) — ${Number(item.subtotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</li>
         `).join('');
 
         const reasonHtml = o.status === 'CANCELADO'
           ? `<div class="cancel-reason-box"><strong>Motivo do Cancelamento:</strong> ${o.cancellation_reason || 'Não informado'}</div>`
+          : '';
+
+        const whatsappBtnHtml = waLink && o.status !== 'CANCELADO'
+          ? `<a href="${waLink}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #16a34a; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700;">Confirmar no WhatsApp</a>`
           : '';
 
         return `
@@ -492,21 +504,24 @@
             </div>
             <ul class="order-items">${itemsHtml}</ul>
             ${reasonHtml}
-            <div class="order-footer">
+            <div class="order-footer" style="flex-wrap: wrap; gap: 10px;">
               <div style="font-size: 16px; font-weight: bold; color: #16a34a;">Total: ${totalStr}</div>
-              <div>
-                <label style="font-size: 13px; margin-right: 6px;">Alterar Status:</label>
-                <select class="status-select" onchange="handleOrderStatusChange(${o.order_id}, this.value)">
-                  <option value="PENDENTE" ${o.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
-                  <option value="PAGO" ${o.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
-                  <option value="ENTREGUE" ${o.status === 'ENTREGUE' ? 'selected' : ''}>ENTREGUE</option>
-                  <option value="CANCELADO" ${o.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
-                </select>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                ${whatsappBtnHtml}
+                <div>
+                  <label style="font-size: 13px; margin-right: 6px;">Alterar Status:</label>
+                  <select class="status-select" onchange="handleOrderStatusChange(${o.order_id}, this.value)">
+                    <option value="PENDENTE" ${o.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                    <option value="PAGO" ${o.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
+                    <option value="ENTREGUE" ${o.status === 'ENTREGUE' ? 'selected' : ''}>ENTREGUE</option>
+                    <option value="CANCELADO" ${o.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
         `;
-      }).join('');
+      }).join('');    
     }
 
     async function loadStock() {
