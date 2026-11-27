@@ -303,7 +303,10 @@
       else if (mode === 'HISTORICO') historyBtn.classList.add('active-historico');
       else cancelBtn.classList.add('active-cancelados');
 
-      function getConfirmedWhatsAppOrders() {
+      renderOrders();
+    }
+
+    function getConfirmedWhatsAppOrders() {
       try {
         return JSON.parse(localStorage.getItem('efk_wa_confirmed_orders') || '[]');
       } catch {
@@ -320,6 +323,16 @@
       window.open(waLink, '_blank', 'noopener,noreferrer');
       renderOrders();
     }
+
+    function handleOrderStatusChange(orderId, newStatus) {
+      if (newStatus === 'CANCELADO') {
+        pendingCancelOrderId = orderId;
+        document.getElementById('cancelReasonInput').value = '';
+        document.getElementById('cancelReasonModal').style.display = 'flex';
+        document.getElementById('cancelReasonInput').focus();
+        return;
+      }
+
       submitOrderStatusUpdate(orderId, newStatus, null);
     }
 
@@ -422,6 +435,7 @@
         allOrders = Array.isArray(data) ? data : (data.orders || data.data || []);
         renderOrders();
       } catch (err) {
+        console.error('Erro ao carregar pedidos:', err);
         document.getElementById('ordersList').innerHTML = '<div class="card">Erro ao carregar pedidos do servidor.</div>';
       }
     }
@@ -462,6 +476,8 @@
         return;
       }
 
+      const confirmedWaList = getConfirmedWhatsAppOrders();
+
       container.innerHTML = filteredOrders.map(o => {
         const dateStr = new Date(o.created_at).toLocaleString('pt-BR');
         const totalStr = Number(o.total_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -476,6 +492,7 @@
 
         const confirmMsg = `Olá, *${customerName}*! Tudo bem?\n\nPassando para confirmar que recebemos o seu pedido *#${o.order_number}* na *EFK Perfumaria e Cosmético* no valor de *${totalStr}*.\n\nJá estamos separando os seus produtos com todo carinho e em breve te avisamos por aqui sobre a entrega!`;
         const waLink = waPhone ? `https://wa.me/${waPhone}?text=${encodeURIComponent(confirmMsg)}` : '';
+        const safeWaLink = waLink.replace(/'/g, '%27');
 
         const itemsHtml = (o.tbl_order_items || []).map(item => `
           <li>${item.quantity}x <strong>${item.tbl_products?.product_name || 'Produto'}</strong> (SKU: ${item.tbl_products?.sku || '-'}) — ${Number(item.subtotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</li>
@@ -485,11 +502,10 @@
           ? `<div class="cancel-reason-box"><strong>Motivo do Cancelamento:</strong> ${o.cancellation_reason || 'Não informado'}</div>`
           : '';
 
-        const confirmedWaList = getConfirmedWhatsAppOrders();
         const isWaConfirmed = confirmedWaList.includes(o.order_id);
 
         let whatsappBtnHtml = '';
-        if (waLink && o.status === 'PENDENTE') {
+        if (safeWaLink && o.status === 'PENDENTE') {
           if (isWaConfirmed) {
             whatsappBtnHtml = `
               <span style="display: inline-flex; align-items: center; gap: 6px; background: #e2e8f0; color: #64748b; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: not-allowed; user-select: none;">
@@ -498,12 +514,13 @@
             `;
           } else {
             whatsappBtnHtml = `
-              <button type="button" onclick="markWhatsAppConfirmed(${o.order_id}, '${waLink}')" style="display: inline-flex; align-items: center; gap: 6px; background: #16a34a; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
+              <button type="button" onclick="markWhatsAppConfirmed(${o.order_id}, '${safeWaLink}')" style="display: inline-flex; align-items: center; gap: 6px; background: #16a34a; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
                 Confirmar no WhatsApp
               </button>
             `;
           }
         }
+
         return `
           <div class="card">
             <div class="order-header">
@@ -538,7 +555,7 @@
             </div>
           </div>
         `;
-      }).join('');    
+      }).join('');
     }
 
     async function loadStock() {
