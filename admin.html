@@ -12,7 +12,7 @@
     header h1 { font-size: 22px; }
     .nav-links a { color: #c7d2fe; text-decoration: none; margin-left: 20px; font-weight: 600; font-size: 14px; }
     .nav-links a:hover { color: white; }
-    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    .container { max-width: 1260px; margin: 30px auto; padding: 0 20px; }
     .tabs { display: flex; gap: 12px; margin-bottom: 24px; }
     .tab-btn { padding: 12px 24px; border: none; border-radius: 8px; background: #e2e8f0; color: #475569; font-weight: bold; cursor: pointer; font-size: 14px; }
     .tab-btn.active { background: #4f46e5; color: white; }
@@ -45,6 +45,7 @@
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle; }
     th { background: #f8fafc; font-weight: bold; color: #475569; }
+    tr.row-inactive { background: #f8fafc; opacity: 0.72; }
     .stock-input { width: 70px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
     .btn-save { background: #16a34a; color: white; border: none; padding: 7px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 6px; }
     .btn-save:hover { background: #15803d; }
@@ -53,19 +54,30 @@
     .btn-photo { background: #4f46e5; color: white; border: none; padding: 7px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; }
     .btn-photo:hover { background: #4338ca; }
     .desc-preview { font-size: 12px; color: #64748b; margin-top: 4px; max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .btn-edit-desc { background: #0f766e; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 11.5px; cursor: pointer; margin-top: 6px; display: inline-block; }
+    .product-actions-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .btn-edit-desc { background: #0f766e; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 11.5px; cursor: pointer; }
     .btn-edit-desc:hover { background: #115e59; }
+    .btn-edit-prod { background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 11.5px; cursor: pointer; }
+    .btn-edit-prod:hover { background: #1d4ed8; }
+    .btn-toggle-active { border: none; padding: 5px 10px; border-radius: 4px; font-weight: 700; font-size: 11.5px; cursor: pointer; }
+    .btn-toggle-active.is-active { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .btn-toggle-active.is-inactive { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .meta-tags { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+    .meta-pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #eef2ff; color: #4338ca; }
+    .modal-field-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 5px; }
+    .modal-field-input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13.5px; margin-bottom: 14px; outline: none; }
+    .modal-field-input:focus { border-color: #4f46e5; }
   </style>
 </head>
 <body>
   <header>
     <div style="display: flex; align-items: center; gap: 16px;">
       <div style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; border: 2px solid #d4af37; background: radial-gradient(circle at 30% 30%, #134e3e, #072920); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-        <img 
-          src="assets/logo-efk.jpg" 
-          onerror="this.style.display='none'; document.getElementById('adminEfkSvg').style.display='block';" 
-          alt="EFK Perfumaria e Cosmético" 
-          style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+        <img
+          src="assets/logo-efk.jpg"
+          onerror="this.style.display='none'; document.getElementById('adminEfkSvg').style.display='block';"
+          alt="EFK Perfumaria e Cosmético"
+          style="width: 100%; height: 100%; object-fit: cover; display: block;"
         />
         <svg id="adminEfkSvg" viewBox="0 0 120 120" style="display: none; width: 54px; height: 54px;">
           <defs>
@@ -106,7 +118,7 @@
   <div class="container">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('orders', this)">Pedidos Recebidos</button>
-      <button class="tab-btn" onclick="switchTab('stock', this)">Gestão de Estoque</button>
+      <button class="tab-btn" onclick="switchTab('stock', this)">Gestão de Estoque &amp; Catálogo</button>
     </div>
 
     <div id="ordersSection" class="section active">
@@ -152,7 +164,7 @@
           <tr>
             <th>Foto</th>
             <th>SKU</th>
-            <th>Produto &amp; Descrição</th>
+            <th>Produto, Marca &amp; Ações</th>
             <th>Preço</th>
             <th>Estoque Atual</th>
             <th>Repor / Ajustar (+/-)</th>
@@ -163,6 +175,50 @@
     </div>
   </div>
 
+  <!-- Modal Editar Dados do Produto (Nome, Preço, Marca, Categoria) -->
+  <div id="editProductModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; border-radius: 20px; max-width: 480px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);">
+      <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin-bottom: 4px;">Editar Dados do Produto</h3>
+      <p id="editProductSkuLabel" style="font-size: 12.5px; color: #4f46e5; font-weight: 700; margin-bottom: 16px;"></p>
+
+      <label class="modal-field-label" for="editProdName">Nome do Produto *</label>
+      <input type="text" id="editProdName" class="modal-field-input" placeholder="Ex: Malbec Desodorante Colônia 100ml" />
+
+      <label class="modal-field-label" for="editProdPrice">Preço de Venda (R$) *</label>
+      <input type="number" step="0.01" min="0.01" id="editProdPrice" class="modal-field-input" placeholder="Ex: 189.90" />
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label class="modal-field-label" for="editProdBrand">Marca</label>
+          <select id="editProdBrand" class="modal-field-input">
+            <option value="Natura">Natura</option>
+            <option value="O Boticário">O Boticário</option>
+            <option value="Avon">Avon</option>
+            <option value="Eudora">Eudora</option>
+            <option value="Outras">Outras</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-field-label" for="editProdCategory">Categoria</label>
+          <select id="editProdCategory" class="modal-field-input">
+            <option value="Perfume">Perfume</option>
+            <option value="Hidratante">Hidratante</option>
+            <option value="Cabelo">Cabelo</option>
+            <option value="Maquiagem">Maquiagem</option>
+            <option value="Limpeza">Limpeza</option>
+            <option value="Perfumaria e Cosméticos">Outros Cuidados</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px;">
+        <button type="button" onclick="closeEditProductModal()" style="padding: 10px 18px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; font-weight: 600; cursor: pointer;">Cancelar</button>
+        <button type="button" id="saveProdDetailsBtn" onclick="saveEditedProductDetails()" style="padding: 10px 18px; border-radius: 10px; border: none; background: #2563eb; color: #ffffff; font-weight: 700; cursor: pointer;">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Descrição -->
   <div id="editDescriptionModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; border-radius: 20px; max-width: 520px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);">
       <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin-bottom: 6px;">Editar Descrição do Produto</h3>
@@ -182,6 +238,7 @@
     </div>
   </div>
 
+  <!-- Modal Motivo Cancelamento -->
   <div id="cancelReasonModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);">
       <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin-bottom: 6px;">Motivo do Cancelamento</h3>
@@ -214,6 +271,7 @@
     let ordersViewMode = 'ATIVOS';
     let pendingCancelOrderId = null;
     let editingDescriptionProductId = null;
+    let editingProductDetailsId = null;
 
     setInterval(() => {
       if (!document.hidden) {
@@ -322,6 +380,12 @@
     }
 
     function detectBrand(product) {
+      const dbBrand = normalizeText(product.tbl_brands?.brand_name || '');
+      if (dbBrand.includes('BOTICARIO')) return 'BOTICARIO';
+      if (dbBrand.includes('EUDORA')) return 'EUDORA';
+      if (dbBrand.includes('AVON')) return 'AVON';
+      if (dbBrand.includes('NATURA')) return 'NATURA';
+
       const source = normalizeText(
         `${product.brand || ''} ${product.marca || ''} ${product.product_name || ''} ${product.image_url || product.image || ''}`
       );
@@ -447,7 +511,7 @@
 
     async function loadStock() {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(`${API_URL}/admin/all`);
         if (!res.ok) throw new Error('Falha ao buscar produtos');
         const data = await res.json();
         allProducts = Array.isArray(data) ? data : (data.products || data.data || []);
@@ -485,6 +549,95 @@
       }
     }
 
+    /* Edição Completa de Produto (Nome, Preço, Marca, Categoria) */
+    function openEditProductModal(productId) {
+      const product = allProducts.find(p => String(p.product_id) === String(productId));
+      if (!product) return;
+
+      editingProductDetailsId = productId;
+      document.getElementById('editProductSkuLabel').textContent = `Código SKU: ${product.sku}`;
+      document.getElementById('editProdName').value = product.product_name || '';
+      document.getElementById('editProdPrice').value = Number(product.price || 0).toFixed(2);
+
+      const brandSelect = document.getElementById('editProdBrand');
+      const currentBrand = product.tbl_brands?.brand_name || 'Natura';
+      brandSelect.value = Array.from(brandSelect.options).some(o => o.value === currentBrand) ? currentBrand : 'Outras';
+
+      const catSelect = document.getElementById('editProdCategory');
+      const currentCat = product.tbl_categories?.category_name || 'Perfumaria e Cosméticos';
+      catSelect.value = Array.from(catSelect.options).some(o => o.value === currentCat) ? currentCat : 'Perfumaria e Cosméticos';
+
+      document.getElementById('editProductModal').style.display = 'flex';
+      document.getElementById('editProdName').focus();
+    }
+
+    function closeEditProductModal() {
+      editingProductDetailsId = null;
+      document.getElementById('editProductModal').style.display = 'none';
+    }
+
+    async function saveEditedProductDetails() {
+      if (!editingProductDetailsId) return;
+
+      const product_name = document.getElementById('editProdName').value.trim();
+      const price = parseFloat(document.getElementById('editProdPrice').value);
+      const brand_name = document.getElementById('editProdBrand').value;
+      const category_name = document.getElementById('editProdCategory').value;
+
+      if (!product_name) {
+        alert('O nome do produto não pode ficar vazio.');
+        return;
+      }
+      if (isNaN(price) || price <= 0) {
+        alert('Informe um preço válido maior que zero.');
+        return;
+      }
+
+      const btn = document.getElementById('saveProdDetailsBtn');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+
+      try {
+        const res = await fetch(`${API_URL}/${editingProductDetailsId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_name, price, brand_name, category_name }),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success !== false) {
+          closeEditProductModal();
+          await loadStock();
+        } else {
+          alert(data.message || 'Erro ao atualizar produto.');
+        }
+      } catch (err) {
+        alert('Erro de conexão ao salvar alterações do produto.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Salvar Alterações';
+      }
+    }
+
+    async function toggleProductVisibility(productId, nextActiveState) {
+      try {
+        const res = await fetch(`${API_URL}/${productId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active: nextActiveState }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success !== false) {
+          await loadStock();
+        } else {
+          alert(data.message || 'Erro ao alterar visibilidade do produto.');
+        }
+      } catch (err) {
+        alert('Erro de conexão ao alterar visibilidade.');
+      }
+    }
+
+    /* Edição de Descrição */
     function openEditDescriptionModal(productId) {
       const product = allProducts.find(p => String(p.product_id) === String(productId));
       if (!product) return;
@@ -558,7 +711,10 @@
 
       tbody.innerHTML = filtered.map(p => {
         const currentQty = p.tbl_stock?.quantity ?? 0;
+        const isActive = p.active !== false;
         const priceStr = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const brandName = p.tbl_brands?.brand_name || 'Sem marca';
+        const catName = p.tbl_categories?.category_name || 'Geral';
         const rawImg = p.tbl_product_images?.[0]?.image_url || p.image_url || p.image || '';
         const imgSrc = rawImg
           ? (rawImg.startsWith('http') || rawImg.startsWith('assets/') ? rawImg : `${API_BASE_URL}/${rawImg}`)
@@ -566,7 +722,7 @@
         const descText = (p.description || 'Sem descrição cadastrada').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
         return `
-          <tr>
+          <tr class="${isActive ? '' : 'row-inactive'}">
             <td>
               <div class="photo-cell">
                 ${imgSrc ? `<img src="${imgSrc}" class="thumb-img" alt="Foto" />` : ''}
@@ -577,10 +733,25 @@
             <td>${p.sku}</td>
             <td>
               <strong>${p.product_name}</strong>
+              <div class="meta-tags">
+                <span class="meta-pill">${brandName}</span>
+                <span class="meta-pill">${catName}</span>
+              </div>
               <div class="desc-preview" title="${descText}">${descText}</div>
-              <button type="button" class="btn-edit-desc" onclick="openEditDescriptionModal(${p.product_id})">Editar Descrição</button>
+              <div class="product-actions-row">
+                <button type="button" class="btn-edit-prod" onclick="openEditProductModal(${p.product_id})">Editar Produto</button>
+                <button type="button" class="btn-edit-desc" onclick="openEditDescriptionModal(${p.product_id})">Editar Descrição</button>
+                <button
+                  type="button"
+                  class="btn-toggle-active ${isActive ? 'is-active' : 'is-inactive'}"
+                  onclick="toggleProductVisibility(${p.product_id}, ${!isActive})"
+                  title="Clique para alternar se este produto aparece ou fica oculto na vitrine"
+                >
+                  ${isActive ? '● Ativo na Vitrine' : '○ Oculto na Vitrine'}
+                </button>
+              </div>
             </td>
-            <td>${priceStr}</td>
+            <td><strong>${priceStr}</strong></td>
             <td><strong>${currentQty} un.</strong></td>
             <td>
               <input type="number" id="qty_${p.product_id}" class="stock-input" placeholder="+10" />

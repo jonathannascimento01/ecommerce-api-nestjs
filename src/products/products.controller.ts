@@ -20,6 +20,11 @@ export class ProductsController {
     return await this.productsService.findAll();
   }
 
+  @Get('admin/all')
+  async findAllAdmin() {
+    return await this.productsService.findAllAdmin();
+  }
+
   @Post('checkout')
   async checkout(@Body() body: any) {
     return await this.productsService.createCheckout(body);
@@ -56,6 +61,22 @@ export class ProductsController {
       description,
     );
   }
+
+  @Patch(':id')
+  async updateProductDetails(
+    @Param('id') id: string,
+    @Body()
+    body: {
+      product_name?: string;
+      price?: number;
+      brand_name?: string;
+      category_name?: string;
+      active?: boolean;
+    },
+  ) {
+    return await this.productsService.updateProductDetails(Number(id), body);
+  }
+
   @Post(':id/image')
   async saveProductImage(
     @Param('id') id: string,

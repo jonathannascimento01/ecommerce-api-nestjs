@@ -221,7 +221,7 @@
 
     .main-container { max-width: 1260px; margin: 0 auto; padding: 34px 24px 64px; }
 
-    /* ZONA 1 SAZONAL: ESPECIAL DE NATAL COM CORES NATALINAS E PISCA-PISCA */
+    /* ZONA 1 SAZONAL: ESPECIAL DE NATAL */
     @keyframes piscaNatalA {
       0%, 100% { opacity: 1; transform: scale(1.18); filter: brightness(1.35); }
       50% { opacity: 0.22; transform: scale(0.88); filter: brightness(0.6); }
@@ -460,7 +460,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      margin: 0 0 36px;
+      margin: 0 0 24px;
     }
     .brand-column {
       background: var(--glass-card);
@@ -501,6 +501,74 @@
       letter-spacing: 0.9px;
       margin: 0;
       color: var(--boti-forest);
+    }
+
+    /* BARRA DE CATEGORIAS RÁPIDAS E ORDENAÇÃO */
+    .catalog-toolbar {
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(0, 122, 77, 0.20);
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(19, 56, 44, 0.06);
+    }
+    .category-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .cat-quick-pill {
+      padding: 8px 15px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(0, 122, 77, 0.24);
+      background: #ffffff;
+      color: var(--boti-forest);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cat-quick-pill:hover {
+      border-color: var(--natura-orange);
+      color: var(--natura-orange);
+      transform: translateY(-1px);
+    }
+    .cat-quick-pill.active {
+      background: linear-gradient(135deg, var(--natura-orange), var(--boti-emerald));
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 6px 16px rgba(0, 122, 77, 0.22);
+    }
+    .sort-control-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sort-control-box label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-forest);
+    }
+    .sort-select {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(0, 122, 77, 0.26);
+      background: #ffffff;
+      color: var(--boti-forest);
+      font-size: 12.5px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+    .sort-select:focus {
+      border-color: var(--natura-orange);
     }
 
     /* Barra de Filtro Ativo */
@@ -664,6 +732,34 @@
     }
     .card-visual img { width: 100%; height: 100%; object-fit: contain; padding: 12px; background: #ffffff; }
     .placeholder-icon { opacity: 0.85; }
+
+    /* Selos de Destaque e Escassez */
+    .product-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      z-index: 2;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    }
+    .badge-low-stock {
+      background: linear-gradient(135deg, #E85D04, #dc2626);
+      color: #ffffff;
+    }
+    .badge-kit {
+      background: linear-gradient(135deg, #0b3b2c, #007A4D);
+      color: #ffe885;
+      border: 1px solid #ffd700;
+    }
+    .badge-sold-out {
+      background: #334155;
+      color: #f8fafc;
+    }
+
     .view-details-hint {
       position: absolute;
       bottom: 8px;
@@ -1297,6 +1393,28 @@
       </div>
     </section>
 
+    <!-- BARRA DE CATEGORIAS RÁPIDAS E ORDENAÇÃO -->
+    <section class="catalog-toolbar">
+      <div class="category-pills-row" id="quickCategoryPills">
+        <button type="button" class="cat-quick-pill active" data-cat="" onclick="selectQuickCategory('')">Todas as Categorias</button>
+        <button type="button" class="cat-quick-pill" data-cat="Perfume" onclick="selectQuickCategory('Perfume')">✨ Perfumes</button>
+        <button type="button" class="cat-quick-pill" data-cat="Hidratante" onclick="selectQuickCategory('Hidratante')">🧴 Hidratantes</button>
+        <button type="button" class="cat-quick-pill" data-cat="Cabelo" onclick="selectQuickCategory('Cabelo')">💆‍♀️ Cabelos</button>
+        <button type="button" class="cat-quick-pill" data-cat="Maquiagem" onclick="selectQuickCategory('Maquiagem')">💄 Maquiagem</button>
+        <button type="button" class="cat-quick-pill" data-cat="Limpeza" onclick="selectQuickCategory('Limpeza')">🧼 Limpeza &amp; Sabonetes</button>
+      </div>
+
+      <div class="sort-control-box">
+        <label for="catalogSortSelect">Ordenar:</label>
+        <select id="catalogSortSelect" class="sort-select" onchange="renderVitrineEstruturada()">
+          <option value="default">Destaques</option>
+          <option value="price-asc">Menor Preço</option>
+          <option value="price-desc">Maior Preço</option>
+          <option value="name-asc">Nome (A–Z)</option>
+        </select>
+      </div>
+    </section>
+
     <!-- Indicador de Filtro Ativo -->
     <div id="filterStatusBar" class="filter-status-bar">
       <span id="filterStatusText"></span>
@@ -1548,10 +1666,11 @@
 
     const CATEGORIAS_BLOCOS = [
       { id: 'cat-perfume', titulo: 'Perfume' },
+      { id: 'cat-hidratante', titulo: 'Hidratante' },
       { id: 'cat-cabelo', titulo: 'Cabelo' },
       { id: 'cat-maquiagem', titulo: 'Maquiagem' },
-      { id: 'cat-hidratante', titulo: 'Hidratante' },
       { id: 'cat-limpeza', titulo: 'Limpeza' },
+      { id: 'cat-outros', titulo: 'Outros Cuidados' },
     ];
 
     function normalizeText(str) {
@@ -1563,47 +1682,42 @@
       const cleanName = rawName.replace(/^\d+\s*/, '');
       const catDb = normalizeText(product.tbl_categories?.category_name);
 
-      const makeKeywords = ['batom', 'gloss', 'maquiagem', 'base', 'rimel', 'mascara de cilios', 'blush', 'po compacto', 'sombra', 'lapis', 'delineador', 'corretivo', 'iluminador'];
+      const makeKeywords = ['batom', 'gloss', 'maquiagem', 'base', 'rimel', 'mascara de cilios', 'blush', 'po compacto', 'sombra', 'lapis', 'delineador', 'corretivo', 'iluminador', 'esmalte'];
       if (makeKeywords.some(k => cleanName.includes(k)) || catDb === 'maquiagem') {
         return 'Maquiagem';
       }
 
-      if (
-        cleanName.startsWith('hidratante') ||
-        cleanName.startsWith('locao hidratante') ||
-        cleanName.startsWith('creme hidratante') ||
-        cleanName.startsWith('des hid') ||
-        cleanName.startsWith('desodorante hidratante')
-      ) {
+      const bodyKeywords = ['hidratante', 'locao', 'creme corporal', 'creme para maos', 'creme para os pes', 'des hid', 'desodorante hidratante', 'oleo corporal', 'oleo trifasico', 'nativa spa', 'tododia'];
+      if (bodyKeywords.some(k => cleanName.includes(k)) || catDb === 'hidratante') {
         return 'Hidratante';
       }
 
-      const hairKeywords = ['cabelo', 'shampoo', 'condicionador', 'mascara capilar', 'capilar', 'creme para pentear', 'reparador', 'leave-in', 'tonico capilar'];
+      const hairKeywords = ['cabelo', 'shampoo', 'condicionador', 'mascara capilar', 'capilar', 'creme para pentear', 'reparador', 'leave-in', 'tonico capilar', 'siage'];
       if (hairKeywords.some(k => cleanName.includes(k)) || catDb === 'cabelo') {
         return 'Cabelo';
       }
 
-      const cleanKeywords = ['limpeza', 'sabonete', 'esfoliante', 'gel de limpeza', 'demaquilante', 'agua micelar', 'espuma de limpeza'];
+      const cleanKeywords = ['limpeza', 'sabonete', 'esfoliante', 'gel de limpeza', 'demaquilante', 'agua micelar', 'espuma de limpeza', 'desodorante roll', 'antitranspirante'];
       if (cleanKeywords.some(k => cleanName.includes(k)) || catDb === 'limpeza') {
         return 'Limpeza';
       }
 
-      const perfumeKeywords = ['perfume', 'colonia', 'parfum', 'deo parfum', 'desodorante colonia', 'edp', 'edt', 'essencial', 'audaz', 'aura', 'kaiak', 'malbec', 'lily', 'floratta', 'egeo'];
+      const perfumeKeywords = ['perfume', 'colonia', 'parfum', 'deo parfum', 'desodorante colonia', 'body splash', 'splash', 'edp', 'edt', 'essencial', 'audaz', 'aura', 'kaiak', 'malbec', 'lily', 'floratta', 'egeo', 'luna', 'ilia', 'kriska', 'biografia', 'far away', 'glamour', 'coffee', 'quasar'];
       if (perfumeKeywords.some(k => cleanName.includes(k)) || catDb === 'perfume' || catDb === 'perfumaria') {
         return 'Perfume';
       }
 
-      return null;
+      return 'Outros Cuidados';
     }
 
     function getProductBrand(product) {
       const rawBrand = (product.tbl_brands?.brand_name || '').trim();
       const name = normalizeText(product.product_name);
 
-      if (name.includes('avon') || name.includes('alice')) return 'Avon';
-      if (name.includes('eudora') || name.includes('aura') || name.includes('siage')) return 'Eudora';
-      if (name.includes('boticario') || name.includes('malbec') || name.includes('lily') || name.includes('floratta') || name.includes('egeo')) return 'O Boticário';
-      if (name.includes('natura') || name.includes('essencial') || name.includes('una') || name.includes('faces') || name.includes('kaiak') || name.includes('ekos') || name.includes('tododia')) return 'Natura';
+      if (name.includes('avon') || name.includes('alice') || name.includes('far away') || name.includes('renew')) return 'Avon';
+      if (name.includes('eudora') || name.includes('aura') || name.includes('siage') || name.includes('niina')) return 'Eudora';
+      if (name.includes('boticario') || name.includes('malbec') || name.includes('lily') || name.includes('floratta') || name.includes('egeo') || name.includes('glamour') || name.includes('coffee') || name.includes('quasar') || name.includes('nativa spa')) return 'O Boticário';
+      if (name.includes('natura') || name.includes('essencial') || name.includes('una') || name.includes('faces') || name.includes('kaiak') || name.includes('ekos') || name.includes('tododia') || name.includes('luna') || name.includes('ilia') || name.includes('kriska')) return 'Natura';
 
       if (rawBrand) {
         const b = normalizeText(rawBrand);
@@ -1616,11 +1730,34 @@
       return 'Outras';
     }
 
+    function sortProductsList(list) {
+      const sortMode = document.getElementById('catalogSortSelect')?.value || 'default';
+      const copy = [...list];
+      if (sortMode === 'price-asc') {
+        copy.sort((a, b) => Number(a.price) - Number(b.price));
+      } else if (sortMode === 'price-desc') {
+        copy.sort((a, b) => Number(b.price) - Number(a.price));
+      } else if (sortMode === 'name-asc') {
+        copy.sort((a, b) => (a.product_name || '').localeCompare(b.product_name || '', 'pt-BR'));
+      }
+      return copy;
+    }
+
     function buildProductCardHTML(p) {
       const brand = getProductBrand(p);
       const stock = p.tbl_stock?.quantity ?? 0;
       const priceFormatted = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
       const imageUrl = p.tbl_product_images?.[0]?.image_url || p.image_url || p.image;
+      const isKit = normalizeText(p.product_name).includes('kit');
+
+      let badgeHTML = '';
+      if (stock <= 0) {
+        badgeHTML = `<span class="product-badge badge-sold-out">Esgotado</span>`;
+      } else if (stock <= 3) {
+        badgeHTML = `<span class="product-badge badge-low-stock">🔥 Últimas ${stock} un.</span>`;
+      } else if (isKit) {
+        badgeHTML = `<span class="product-badge badge-kit">🎁 Kit Presente</span>`;
+      }
 
       const visualHTML = imageUrl
         ? `<img src="${imageUrl}" alt="${p.product_name}" loading="lazy" />`
@@ -1628,11 +1765,12 @@
 
       const actionHTML = stock > 0
         ? `<button class="add-circle-btn" onclick="event.stopPropagation(); addToCart(${p.product_id})" title="Adicionar à Sacola">+</button>`
-        : `<span class="sold-out-tag">Esgotado</span>`;
+        : `<span class="sold-out-tag">Indisponível</span>`;
 
       return `
         <div class="card card-clickable" onclick="openProductModal(${p.product_id})">
           <div class="card-visual">
+            ${badgeHTML}
             ${visualHTML}
             <span class="view-details-hint">Ver detalhes</span>
           </div>
@@ -1655,6 +1793,12 @@
       track.scrollBy({ left: direction * step, behavior: 'smooth' });
     }
 
+    function selectQuickCategory(cat) {
+      selectedSubcategory = selectedSubcategory === cat && cat !== '' ? '' : cat;
+      syncToolbarAndNavUI();
+      renderVitrineEstruturada();
+    }
+
     function selectBrandNav(brand, subcategory) {
       if (selectedBrand === brand && selectedSubcategory === subcategory && brand !== '') {
         selectedBrand = '';
@@ -1664,6 +1808,15 @@
         selectedSubcategory = subcategory;
       }
 
+      syncToolbarAndNavUI();
+      renderVitrineEstruturada();
+
+      if (selectedBrand || selectedSubcategory) {
+        document.getElementById('categoriesBlocksContainer').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function syncToolbarAndNavUI() {
       document.querySelectorAll('.nav-menu a').forEach(a => {
         a.classList.toggle('active', a.getAttribute('data-brand') === selectedBrand);
       });
@@ -1672,11 +1825,9 @@
         col.classList.toggle('active-brand', col.getAttribute('data-brand-card') === selectedBrand);
       });
 
-      renderVitrineEstruturada();
-
-      if (selectedBrand || selectedSubcategory) {
-        document.getElementById('categoriesBlocksContainer').scrollIntoView({ behavior: 'smooth' });
-      }
+      document.querySelectorAll('#quickCategoryPills .cat-quick-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.getAttribute('data-cat') === selectedSubcategory);
+      });
     }
 
     function matchesSubcategory(product, sub) {
@@ -1720,24 +1871,26 @@
         statusBar.classList.remove('visible');
       }
 
-      const baseFiltrada = allProducts.filter(p => {
-        const matchesText = !searchTerm || normalizeText(p.product_name).includes(searchTerm) || String(p.sku).includes(searchTerm);
+      const baseFiltrada = sortProductsList(
+        allProducts.filter(p => {
+          const matchesText = !searchTerm || normalizeText(p.product_name).includes(searchTerm) || String(p.sku).includes(searchTerm);
 
-        let matchesBrand = true;
-        if (selectedBrand) {
-          if (selectedBrand === 'Diversos') {
-            const detectedBrand = getProductBrand(p);
-            const normName = normalizeText(p.product_name);
-            const isPromoItem = ['catalogo', 'revista', 'amostra', 'flaconete', 'brinde', 'sacola'].some(k => normName.includes(k));
-            matchesBrand = detectedBrand === 'Outras' || isPromoItem;
-          } else {
-            matchesBrand = normalizeText(getProductBrand(p)) === normalizeText(selectedBrand);
+          let matchesBrand = true;
+          if (selectedBrand) {
+            if (selectedBrand === 'Diversos') {
+              const detectedBrand = getProductBrand(p);
+              const normName = normalizeText(p.product_name);
+              const isPromoItem = ['catalogo', 'revista', 'amostra', 'flaconete', 'brinde', 'sacola'].some(k => normName.includes(k));
+              matchesBrand = detectedBrand === 'Outras' || isPromoItem;
+            } else {
+              matchesBrand = normalizeText(getProductBrand(p)) === normalizeText(selectedBrand);
+            }
           }
-        }
 
-        const matchesSub = matchesSubcategory(p, selectedSubcategory);
-        return matchesText && matchesBrand && matchesSub;
-      });
+          const matchesSub = matchesSubcategory(p, selectedSubcategory);
+          return matchesText && matchesBrand && matchesSub;
+        })
+      );
 
       const container = document.getElementById('categoriesBlocksContainer');
       const blocosToRender = selectedSubcategory
@@ -2120,7 +2273,7 @@
         <strong>Características &amp; Ficha Técnica</strong><br/><br/>
         <strong>Marca:</strong> ${brand}<br/>
         <strong>Código de Referência:</strong> ${product.sku}<br/>
-        <strong>Disponibilidade:</strong> ${stock > 0 ? 'Pronta entrega' : 'Indisponível no momento'}<br/><br/>
+        <strong>Disponibilidade:</strong> ${stock > 0 ? (stock <= 3 ? `Pronta entrega (últimas ${stock} un.)` : 'Pronta entrega') : 'Indisponível no momento'}<br/><br/>
         <strong>Descrição:</strong><br/>${descriptionText}
       `;
       document.getElementById('modalProductPrice').textContent = priceFormatted;

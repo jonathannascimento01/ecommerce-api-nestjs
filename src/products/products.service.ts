@@ -46,6 +46,22 @@ export class ProductsService {
     });
   }
 
+  async findAllAdmin() {
+    return await this.prisma.tbl_products.findMany({
+      include: {
+        tbl_brands: true,
+        tbl_categories: true,
+        tbl_stock: true,
+        tbl_product_images: {
+          orderBy: { sort_order: 'asc' },
+        },
+      },
+      orderBy: {
+        product_name: 'asc',
+      },
+    });
+  }
+
   async createCheckout(payload: {
     customerEmail?: string;
     customerName: string;
@@ -451,6 +467,194 @@ export class ProductsService {
     }
   }
 
+  async updateProductDetails(
+    productId: number,
+    payload: {
+      product_name?: string;
+      price?: number;
+      brand_name?: string;
+      category_name?: string;
+      active?: boolean;
+    },
+  ) {
+    try {
+      const prodId = BigInt(productId);
+      const dataToUpdate: any = {};
+
+      if (payload.product_name !== undefined && payload.product_name.trim()) {
+        dataToUpdate.product_name = payload.product_name.trim();
+      }
+
+      if (
+        payload.price !== undefined &&
+        !isNaN(Number(payload.price)) &&
+        Number(payload.price) > 0
+      ) {
+        dataToUpdate.price = Number(payload.price);
+      }
+
+      if (typeof payload.active === 'boolean') {
+        dataToUpdate.active = payload.active;
+      }
+
+      if (payload.brand_name && payload.brand_name.trim()) {
+        const cleanBrand = payload.brand_name.trim();
+        let brand = await this.prisma.tbl_brands.findUnique({
+          where: { brand_name: cleanBrand },
+        });
+        if (!brand) {
+          brand = await this.prisma.tbl_brands.create({
+            data: { brand_name: cleanBrand },
+          });
+        }
+        dataToUpdate.brand_id = brand.brand_id;
+      }
+
+      if (payload.category_name && payload.category_name.trim()) {
+        const cleanCat = payload.category_name.trim();
+        let category = await this.prisma.tbl_categories.findUnique({
+          where: { category_name: cleanCat },
+        });
+        if (!category) {
+          category = await this.prisma.tbl_categories.create({
+            data: { category_name: cleanCat },
+          });
+        }
+        dataToUpdate.category_id = category.category_id;
+      }
+
+      await this.prisma.tbl_products.update({
+        where: { product_id: prodId },
+        data: dataToUpdate,
+      });
+
+      return {
+        success: true,
+        message: 'Dados do produto atualizados com sucesso!',
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Erro ao atualizar produto: ${error.message}`,
+      };
+    }
+  }
+
+  private detectBrandAndCategory(productName: string): {
+    brandName: string;
+    categoryName: string;
+  } {
+    const norm = productName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+
+    let brandName = 'Natura';
+    if (
+      norm.includes('boticario') ||
+      norm.includes('malbec') ||
+      norm.includes('lily') ||
+      norm.includes('floratta') ||
+      norm.includes('egeo') ||
+      norm.includes('glamour') ||
+      norm.includes('coffee') ||
+      norm.includes('quasar') ||
+      norm.includes('nativa spa') ||
+      norm.includes('cuide-se bem')
+    ) {
+      brandName = 'O Boticário';
+    } else if (
+      norm.includes('eudora') ||
+      norm.includes('siage') ||
+      norm.includes('niina') ||
+      norm.includes('aura')
+    ) {
+      brandName = 'Eudora';
+    } else if (
+      norm.includes('avon') ||
+      norm.includes('far away') ||
+      norm.includes('renew') ||
+      norm.includes('color trend')
+    ) {
+      brandName = 'Avon';
+    }
+
+    let categoryName = 'Perfumaria e Cosméticos';
+    if (
+      [
+        'batom',
+        'gloss',
+        'maquiagem',
+        'base',
+        'rimel',
+        'blush',
+        'sombra',
+        'delineador',
+        'corretivo',
+        'esmalte',
+      ].some((k) => norm.includes(k))
+    ) {
+      categoryName = 'Maquiagem';
+    } else if (
+      [
+        'hidratante',
+        'locao',
+        'creme corporal',
+        'creme para maos',
+        'oleo corporal',
+        'nativa spa',
+        'tododia',
+      ].some((k) => norm.includes(k))
+    ) {
+      categoryName = 'Hidratante';
+    } else if (
+      [
+        'cabelo',
+        'shampoo',
+        'condicionador',
+        'capilar',
+        'creme para pentear',
+        'leave-in',
+        'siage',
+      ].some((k) => norm.includes(k))
+    ) {
+      categoryName = 'Cabelo';
+    } else if (
+      [
+        'limpeza',
+        'sabonete',
+        'esfoliante',
+        'demaquilante',
+        'agua micelar',
+        'desodorante roll',
+      ].some((k) => norm.includes(k))
+    ) {
+      categoryName = 'Limpeza';
+    } else if (
+      [
+        'perfume',
+        'colonia',
+        'parfum',
+        'body splash',
+        'splash',
+        'essencial',
+        'kaiak',
+        'malbec',
+        'lily',
+        'floratta',
+        'egeo',
+        'luna',
+        'ilia',
+        'far away',
+      ].some((k) => norm.includes(k))
+    ) {
+      categoryName = 'Perfume';
+    }
+
+    return { brandName, categoryName };
+  }
+
   async importFromExcel(fileBuffer: Buffer) {
     try {
       const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
@@ -505,8 +709,7 @@ export class ProductsService {
 
         if (price <= 0) continue;
 
-        const categoryName = 'Perfumaria e Cosméticos';
-        const brandName = productName.toUpperCase().includes('AVON') ? 'Avon' : 'Natura';
+        const { brandName, categoryName } = this.detectBrandAndCategory(productName);
 
         let category = await this.prisma.tbl_categories.findUnique({
           where: { category_name: categoryName },
@@ -526,22 +729,22 @@ export class ProductsService {
           });
         }
 
-        let description = `Produto oficial ${brandName} ${productName}.`;
-        try {
-          const aiDesc = await this.geminiService.generateProductDescription(
-            productName,
-            categoryName,
-          );
-          if (aiDesc) description = aiDesc;
-        } catch {
-          // Mantém fallback se a API falhar
-        }
-
         const existingProduct = await this.prisma.tbl_products.findFirst({
           where: { sku: String(sku) },
         });
 
         if (!existingProduct) {
+          let description = `Produto oficial ${brandName} ${productName}.`;
+          try {
+            const aiDesc = await this.geminiService.generateProductDescription(
+              productName,
+              categoryName,
+            );
+            if (aiDesc) description = aiDesc;
+          } catch {
+            // Mantém fallback se a API falhar
+          }
+
           const newProduct = await this.prisma.tbl_products.create({
             data: {
               product_name: productName,
@@ -561,12 +764,27 @@ export class ProductsService {
             },
           });
         } else {
+          let descriptionToKeep = existingProduct.description;
+          if (!descriptionToKeep || !descriptionToKeep.trim()) {
+            try {
+              const aiDesc = await this.geminiService.generateProductDescription(
+                productName,
+                categoryName,
+              );
+              descriptionToKeep = aiDesc || `Produto oficial ${brandName} ${productName}.`;
+            } catch {
+              descriptionToKeep = `Produto oficial ${brandName} ${productName}.`;
+            }
+          }
+
           await this.prisma.tbl_products.update({
             where: { product_id: existingProduct.product_id },
             data: {
               product_name: productName,
               price: price,
-              description: description,
+              description: descriptionToKeep,
+              category_id: category.category_id,
+              brand_id: brand.brand_id,
             },
           });
         }
