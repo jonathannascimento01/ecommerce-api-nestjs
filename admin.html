@@ -8,12 +8,12 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background: #f1f5f9; color: #1e293b; }
+
     header {
       position: sticky;
       top: 0;
       z-index: 1000;
       width: 100%;
-      box-sizing: border-box;
       background: #1e1b4b;
       color: #ffffff;
       padding: 14px 24px;
@@ -52,11 +52,9 @@
       background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
     }
-    header h1 { font-size: 22px; }
-    .nav-links a { color: #c7d2fe; text-decoration: none; margin-left: 20px; font-weight: 600; font-size: 14px; }
-    .nav-links a:hover { color: white; }
+
     .container { max-width: 1260px; margin: 30px auto; padding: 0 20px; }
-    .tabs { display: flex; gap: 12px; margin-bottom: 24px; }
+    .tabs { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
     .tab-btn { padding: 12px 24px; border: none; border-radius: 8px; background: #e2e8f0; color: #475569; font-weight: bold; cursor: pointer; font-size: 14px; }
     .tab-btn.active { background: #4f46e5; color: white; }
     .section { display: none; }
@@ -102,12 +100,13 @@
       padding: 14px 16px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
-    .search-box { display: flex; align-items: center; gap: 10px; }
+
+    .search-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .search-input { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; width: 260px; }
     .count-label { font-size: 13px; color: #64748b; font-weight: 600; }
     .cancel-reason-box { margin-top: 10px; font-size: 13px; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle; color: #1e293b; }
     th { background: #f8fafc; font-weight: bold; color: #475569; }
     tr.row-inactive { background: #f8fafc; opacity: 0.72; }
     .stock-input { width: 70px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
@@ -135,59 +134,52 @@
 </head>
 <body>
   <header>
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; border: 2px solid #d4af37; background: radial-gradient(circle at 30% 30%, #134e3e, #072920); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-        <img
-          src="assets/logo-efk.jpg"
-          onerror="this.style.display='none'; document.getElementById('adminEfkSvg').style.display='block';"
-          alt="EFK Perfumaria e Cosmético"
-          style="width: 100%; height: 100%; object-fit: cover; display: block;"
-        />
-        <svg id="adminEfkSvg" viewBox="0 0 120 120" style="display: none; width: 54px; height: 54px;">
-          <defs>
-            <linearGradient id="adminGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f6e29c" />
-              <stop offset="50%" stop-color="#d4af37" />
-              <stop offset="100%" stop-color="#e5a98c" />
-            </linearGradient>
-          </defs>
-          <circle cx="60" cy="56" r="46" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1.8" stroke-dasharray="3 2" />
-          <circle cx="60" cy="56" r="41" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1" />
-          <text x="60" y="64" text-anchor="middle" fill="url(#adminGoldGrad)" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="27" letter-spacing="1">EFK</text>
-          <text x="60" y="79" text-anchor="middle" fill="#f3d999" font-family="Arial, sans-serif" font-weight="600" font-size="6.2" letter-spacing="1.2">PERFUMARIA</text>
-          <text x="60" y="87" text-anchor="middle" fill="#e5a98c" font-family="Arial, sans-serif" font-weight="600" font-size="5.8" letter-spacing="1">&amp; COSMÉTICO</text>
-        </svg>
+    <div class="header-inner">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; border: 2px solid #d4af37; background: radial-gradient(circle at 30% 30%, #134e3e, #072920); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+          <img
+            src="assets/logo-efk.jpg"
+            onerror="this.style.display='none'; document.getElementById('adminEfkSvg').style.display='block';"
+            alt="EFK Perfumaria e Cosmético"
+            style="width: 100%; height: 100%; object-fit: cover; display: block;"
+          />
+          <svg id="adminEfkSvg" viewBox="0 0 120 120" style="display: none; width: 54px; height: 54px;">
+            <defs>
+              <linearGradient id="adminGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f6e29c" />
+                <stop offset="50%" stop-color="#d4af37" />
+                <stop offset="100%" stop-color="#e5a98c" />
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="56" r="46" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1.8" stroke-dasharray="3 2" />
+            <circle cx="60" cy="56" r="41" fill="none" stroke="url(#adminGoldGrad)" stroke-width="1" />
+            <text x="60" y="64" text-anchor="middle" fill="url(#adminGoldGrad)" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="27" letter-spacing="1">EFK</text>
+            <text x="60" y="79" text-anchor="middle" fill="#f3d999" font-family="Arial, sans-serif" font-weight="600" font-size="6.2" letter-spacing="1.2">PERFUMARIA</text>
+            <text x="60" y="87" text-anchor="middle" fill="#e5a98c" font-family="Arial, sans-serif" font-weight="600" font-size="5.8" letter-spacing="1">&amp; COSMÉTICO</text>
+          </svg>
+        </div>
+
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px;">
+              EFK Perfumaria e Cosmético
+            </h1>
+            <span style="background: #0c3b2e; color: #f6e29c; border: 1px solid #d4af37; font-size: 11px; font-weight: 700; padding: 3px 11px; border-radius: 999px; letter-spacing: 0.5px;">
+              PAINEL ADMINISTRATIVO
+            </span>
+          </div>
+          <p style="margin: 3px 0 0; font-size: 12.5px; color: #cbd5e1;">
+            Painel Administrativo — Erika Fernanda Kezam • Controle de Estoque, Preços e Pedidos
+          </p>
+        </div>
       </div>
 
-      <div>
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px;">
-            EFK Perfumaria e Cosmético
-          </h1>
-          <span style="background: #0c3b2e; color: #f6e29c; border: 1px solid #d4af37; font-size: 11px; font-weight: 700; padding: 3px 11px; border-radius: 999px; letter-spacing: 0.5px;">
-            PAINEL ADMINISTRATIVO
-          </span>
-        </div>
-        <p style="margin: 3px 0 0; font-size: 12.5px; color: #cbd5e1;">
-          Painel Administrativo — Erika Fernanda Kezam • Controle de Estoque, Preços e Pedidos
-        </p>
+      <div class="nav-links">
+        <a href="index.html" target="_blank" rel="noopener noreferrer">Início (Index) ↗</a>
+        <a href="loja.html" target="_blank" rel="noopener noreferrer">Ver Vitrine Online ↗</a>
       </div>
     </div>
-
-    <div class="nav-links">
-      <header>
-      <div class="header-inner">
-        <!-- Mantenha aqui exatamente o bloco atual da logo e título (EFK Perfumaria e Cosmético) -->
-        <div class="brand-area" style="display: flex; align-items: center; gap: 14px;">
-          <!-- Sua imagem da logo e os textos do título/subtítulo permanecem aqui -->
-        </div>
-
-        <div class="nav-links">
-          <a href="index.html" target="_blank" rel="noopener noreferrer">Início (Index) ↗</a>
-          <a href="loja.html" target="_blank" rel="noopener noreferrer">Ver Vitrine Online ↗</a>
-        </div>
-      </div>
-    </header>
+  </header>
 
   <div class="container">
     <div class="tabs">
@@ -204,12 +196,12 @@
           <button type="button" id="tabOrdersHistory" class="sub-tab-btn" onclick="setOrdersView('HISTORICO')">
             Histórico / Entregues (<span id="countHistorico">0</span>)
           </button>
-          <button id="tabOrdersCancelled" class="sub-tab-btn" onclick="setOrdersView('CANCELADOS')">
-          Cancelados (<span id="countCancelados">0</span>)
-        </button>
-        <button id="tabOrdersFidelidade" class="sub-tab-btn" onclick="setOrdersView('FIDELIDADE')">
-          Histórico dos pedidos (<span id="countFidelidade">0</span>)
-        </button>
+          <button type="button" id="tabOrdersCancelled" class="sub-tab-btn" onclick="setOrdersView('CANCELADOS')">
+            Cancelados (<span id="countCancelados">0</span>)
+          </button>
+          <button type="button" id="tabOrdersFidelidade" class="sub-tab-btn" onclick="setOrdersView('FIDELIDADE')">
+            Histórico dos pedidos (<span id="countFidelidade">0</span>)
+          </button>
         </div>
         <div class="search-box">
           <input type="text" id="searchOrderCustomer" class="search-input" placeholder="Filtrar por cliente, WhatsApp ou #pedido..." oninput="renderOrders()" />
@@ -220,19 +212,37 @@
       <div id="ordersList">A carregar pedidos...</div>
     </div>
 
-    <table>
-        <thead>
-          <tr>
-            <th>Foto</th>
-            <th>SKU</th>
-            <th>Produto, Marca &amp; Ações</th>
-            <th>Preço</th>
-            <th>Estoque Atual</th>
-            <th>Repor / Ajustar (+/-)</th>
-          </tr>
-        </thead>
-        <tbody id="stockTableBody"></tbody>
-      </table>
+    <div id="stockSection" class="section">
+      <div class="filter-bar">
+        <div class="brand-filters">
+          <button type="button" class="brand-btn active" onclick="setBrandFilter('TODAS', this)">Todas as Marcas</button>
+          <button type="button" class="brand-btn" onclick="setBrandFilter('BOTICARIO', this)">O Boticário</button>
+          <button type="button" class="brand-btn" onclick="setBrandFilter('NATURA', this)">Natura</button>
+          <button type="button" class="brand-btn" onclick="setBrandFilter('EUDORA', this)">Eudora</button>
+          <button type="button" class="brand-btn" onclick="setBrandFilter('AVON', this)">Avon</button>
+          <button type="button" class="brand-btn" onclick="setBrandFilter('OUTRAS', this)">Outras</button>
+        </div>
+        <div class="search-box">
+          <input type="text" id="searchProduct" class="search-input" placeholder="Buscar produto ou SKU..." oninput="renderStockTable()" />
+          <span id="productCount" class="count-label"></span>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>SKU</th>
+              <th>Produto, Marca &amp; Ações</th>
+              <th>Preço</th>
+              <th>Estoque Atual</th>
+              <th>Repor / Ajustar (+/-)</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -536,7 +546,6 @@
           return;
         }
 
-        // Agrupa por cliente para destacar os campeões de fidelidade
         const customerStatsMap = {};
         filteredHistory.forEach(o => {
           const name = (o.tbl_customers?.full_name || 'Cliente').trim();
@@ -944,7 +953,7 @@
                 <button class="btn-photo" onclick="document.getElementById('file_${p.product_id}').click()">Escolher Arquivo</button>
               </div>
             </td>
-            <td>${p.sku}</td>
+            <td style="white-space: nowrap;">${p.sku}</td>
             <td>
               <strong>${p.product_name}</strong>
               <div class="meta-tags">
@@ -965,9 +974,9 @@
                 </button>
               </div>
             </td>
-            <td><strong>${priceStr}</strong></td>
-            <td><strong>${currentQty} un.</strong></td>
-            <td>
+            <td style="white-space: nowrap;"><strong>${priceStr}</strong></td>
+            <td style="white-space: nowrap;"><strong>${currentQty} un.</strong></td>
+            <td style="white-space: nowrap;">
               <input type="number" id="qty_${p.product_id}" class="stock-input" placeholder="+10" />
               <button class="btn-save" onclick="adjustStock(${p.product_id})">Aplicar</button>
             </td>
