@@ -221,20 +221,23 @@
     </div>
 
     <div id="stockSection" class="section">
-      <div class="filter-bar">
-        <div class="brand-filters">
-          <button class="brand-btn active" onclick="setBrandFilter('TODAS', this)">Todas</button>
-          <button class="brand-btn" onclick="setBrandFilter('NATURA', this)">Natura</button>
-          <button class="brand-btn" onclick="setBrandFilter('AVON', this)">Avon</button>
-          <button class="brand-btn" onclick="setBrandFilter('BOTICARIO', this)">O Boticário</button>
-          <button class="brand-btn" onclick="setBrandFilter('EUDORA', this)">Eudora</button>
-          <button class="brand-btn" onclick="setBrandFilter('OUTRAS', this)">Outras</button>
-        </div>
-        <div class="search-box">
-          <input type="text" id="searchProduct" class="search-input" placeholder="Buscar por nome ou SKU..." oninput="renderStockTable()" />
-          <span id="productCount" class="count-label"></span>
-        </div>
+      <!-- ... filtros de marca e busca ... -->
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>SKU</th>
+              <th>Produto</th>
+              <th>Preço</th>
+              <th>Estoque</th>
+              <th>Ajuste Rápido</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody"></tbody>
+        </table>
       </div>
+    </div>
 
       <table>
         <thead>
