@@ -253,7 +253,7 @@ export class ProductsService {
         : '';
 
       const confirmClientMsg =
-        `Olá, *${customerName}*! Recebemos o seu pedido *#${result.orderNumber}* na *EFK Perfumaria e Cosmético* (${formattedTotal}). Já estamos separando os seus produtos e em breve avisamos sobre a entrega!`;
+  `Olá, *${customerName}*! Recebemos o seu pedido *#${result.orderNumber}* na *EFK Perfumaria e Cosmético* (${formattedTotal}). Já estamos separando os seus produtos e em breve avisamos sobre a entrega!`;
 
       const replyClientLink = waCustomerPhone
         ? `\n\n📲 *Confirmar ao cliente:*\nhttps://wa.me/${waCustomerPhone}?text=${encodeURIComponent(

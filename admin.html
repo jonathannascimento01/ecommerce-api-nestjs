@@ -472,7 +472,7 @@
           ? (cleanPhoneDigits.startsWith('55') ? cleanPhoneDigits : `55${cleanPhoneDigits}`)
           : '';
 
-        const confirmMsg = `Olá, *${customerName}*! Tudo bem? ✨\n\nPassando para confirmar que recebemos o seu pedido *#${o.order_number}* na *EFK Perfumaria e Cosmético* no valor de *${totalStr}*.\n\nJá estamos separando os seus produtos com todo carinho e em breve te avisamos por aqui sobre a entrega! 🛍️💐`;
+        const confirmMsg = `Olá, *${customerName}*! Tudo bem?\n\nPassando para confirmar que recebemos o seu pedido *#${o.order_number}* na *EFK Perfumaria e Cosmético* no valor de *${totalStr}*.\n\nJá estamos separando os seus produtos com todo carinho e em breve te avisamos por aqui sobre a entrega!`;
         const waLink = waPhone ? `https://wa.me/${waPhone}?text=${encodeURIComponent(confirmMsg)}` : '';
 
         const itemsHtml = (o.tbl_order_items || []).map(item => `
