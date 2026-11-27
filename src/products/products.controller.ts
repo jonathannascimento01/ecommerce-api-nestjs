@@ -45,6 +45,17 @@ export class ProductsController {
   ) {
     return await this.productsService.updateStock(Number(id), quantity);
   }
+
+  @Patch(':id/description')
+  async updateDescription(
+    @Param('id') id: string,
+    @Body('description') description: string,
+  ) {
+    return await this.productsService.updateProductDescription(
+      Number(id),
+      description,
+    );
+  }
   @Post(':id/image')
   async saveProductImage(
     @Param('id') id: string,

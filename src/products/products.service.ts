@@ -3,6 +3,25 @@ import { PrismaService } from '../prisma/prisma.service';
 import { GeminiService } from './gemini.service';
 import * as XLSX from 'xlsx';
 
+const GIFT_WRAP_PRICES: Record<string, { label: string; price: number }> = {
+  'Sacola de Presente P com Laço (1 unidade)': {
+    label: 'Sacola de Presente P com Laço (1 unidade)',
+    price: 6.9,
+  },
+  'Sacola de Presente M com Laço (1 unidade)': {
+    label: 'Sacola de Presente M com Laço (1 unidade)',
+    price: 9.9,
+  },
+  'Sacola de Presente G com Laço': {
+    label: 'Sacola de Presente G com Laço',
+    price: 12.9,
+  },
+  'Caixa Especial de Presente Premium': {
+    label: 'Caixa Especial de Presente Premium',
+    price: 13.9,
+  },
+};
+
 @Injectable()
 export class ProductsService {
   constructor(
@@ -28,21 +47,44 @@ export class ProductsService {
   }
 
   async createCheckout(payload: {
+    customerEmail?: string;
     customerName: string;
     customerPhone: string;
     customerAddress?: string;
+    giftOption?: { label: string; price: number } | null;
+    cardMessage?: string | null;
     items: Array<{ product_id: number; quantity: number; price: number }>;
   }) {
     try {
-      const { customerName, customerPhone, customerAddress, items } = payload;
+      const {
+        customerEmail: rawEmail,
+        customerName,
+        customerPhone,
+        customerAddress,
+        giftOption,
+        cardMessage,
+        items,
+      } = payload;
 
       if (!items || items.length === 0) {
         return { success: false, message: 'O carrinho está vazio.' };
       }
 
+      let validatedGift: { label: string; price: number } | null = null;
+      if (giftOption && giftOption.label) {
+        const matchedGift = GIFT_WRAP_PRICES[giftOption.label.trim()];
+        if (matchedGift) {
+          validatedGift = matchedGift;
+        }
+      }
+
+      const giftAmount = validatedGift ? validatedGift.price : 0;
+      const cleanCardMessage = cardMessage?.trim() || '';
+
       const result = await this.prisma.$transaction(async (tx) => {
         const cleanPhone = customerPhone.replace(/\D/g, '') || String(Date.now());
-        const customerEmail = `cliente_${cleanPhone}@kezamstore.local`;
+        const customerEmail =
+          rawEmail?.trim().toLowerCase() || `cliente_${cleanPhone}@kezamstore.local`;
 
         let customer = await tx.tbl_customers.findUnique({
           where: { email: customerEmail },
@@ -58,10 +100,13 @@ export class ProductsService {
               active: true,
             },
           });
-        } else if (customer.full_name !== customerName) {
+        } else if (customer.full_name !== customerName || customer.phone !== customerPhone) {
           customer = await tx.tbl_customers.update({
             where: { customer_id: customer.customer_id },
-            data: { full_name: customerName },
+            data: {
+              full_name: customerName,
+              phone: customerPhone,
+            },
           });
         }
 
@@ -107,7 +152,9 @@ export class ProductsService {
           });
         }
 
+        const finalTotalAmount = Number((subtotalAmount + giftAmount).toFixed(2));
         const orderNumber = `KZ-${Date.now().toString().slice(-6)}`;
+
         await tx.tbl_orders.create({
           data: {
             customer_id: customer.customer_id,
@@ -115,8 +162,8 @@ export class ProductsService {
             customer_address: customerAddress?.trim() || 'Não informado',
             subtotal_amount: subtotalAmount,
             discount_amount: 0,
-            shipping_amount: 0,
-            total_amount: subtotalAmount,
+            shipping_amount: giftAmount,
+            total_amount: finalTotalAmount,
             status: 'PENDENTE',
             tbl_order_items: {
               create: orderItemsData.map((i) => ({
@@ -148,7 +195,13 @@ export class ProductsService {
           });
         }
 
-        return { orderNumber, totalAmount: subtotalAmount, orderItemsData };
+        return {
+          orderNumber,
+          subtotalAmount,
+          giftAmount,
+          totalAmount: finalTotalAmount,
+          orderItemsData,
+        };
       });
 
       const itemsText = result.orderItemsData
@@ -160,6 +213,16 @@ export class ProductsService {
         )
         .join('\n');
 
+      const giftText = validatedGift
+        ? `\n- 1x ${validatedGift.label} - R$ ${validatedGift.price
+            .toFixed(2)
+            .replace('.', ',')}`
+        : '';
+
+      const cardText = cleanCardMessage
+        ? `\n*Cartão de Presente*: "${cleanCardMessage}"`
+        : '';
+
       const addressText = customerAddress?.trim()
         ? `\n*Endereço*: ${customerAddress.trim()}`
         : '';
@@ -169,8 +232,8 @@ export class ProductsService {
         `*Pedido*: #${result.orderNumber}\n` +
         `*Cliente*: ${customerName}\n` +
         `*Contato*: ${customerPhone}` +
-        `${addressText}\n\n` +
-        `*Itens do Pedido*:\n${itemsText}\n\n` +
+        `${addressText}${cardText}\n\n` +
+        `*Itens do Pedido*:\n${itemsText}${giftText}\n\n` +
         `*Total*: R$ ${result.totalAmount.toFixed(2).replace('.', ',')}`;
 
       const targets = [
@@ -235,7 +298,10 @@ export class ProductsService {
       }
 
       if (status === 'CANCELADO' && (!reason || !reason.trim())) {
-        return { success: false, message: 'É obrigatório informar a justificativa do cancelamento.' };
+        return {
+          success: false,
+          message: 'É obrigatório informar a justificativa do cancelamento.',
+        };
       }
 
       await this.prisma.$transaction(async (tx) => {
@@ -359,6 +425,32 @@ export class ProductsService {
     }
   }
 
+  async updateProductDescription(productId: number, description: string) {
+    try {
+      const prodId = BigInt(productId);
+      const cleanDesc = description.trim();
+
+      if (!cleanDesc) {
+        return { success: false, message: 'A descrição não pode ficar vazia.' };
+      }
+
+      await this.prisma.tbl_products.update({
+        where: { product_id: prodId },
+        data: { description: cleanDesc },
+      });
+
+      return {
+        success: true,
+        message: 'Descrição do produto atualizada com sucesso!',
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Erro ao atualizar descrição: ${error.message}`,
+      };
+    }
+  }
+
   async importFromExcel(fileBuffer: Buffer) {
     try {
       const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
@@ -436,7 +528,10 @@ export class ProductsService {
 
         let description = `Produto oficial ${brandName} ${productName}.`;
         try {
-          const aiDesc = await this.geminiService.generateProductDescription(productName, categoryName);
+          const aiDesc = await this.geminiService.generateProductDescription(
+            productName,
+            categoryName,
+          );
           if (aiDesc) description = aiDesc;
         } catch {
           // Mantém fallback se a API falhar
